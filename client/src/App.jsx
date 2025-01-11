@@ -1,8 +1,13 @@
 import React from 'react'
+import LoginPage from './components/LoginPage'
 
 function App() {
   return (
-    <div className='bg-slate-600 text-white'> Social Media App</div>
+    <>
+
+    <LoginPage/>
+    
+    </>
   )
 }
 
