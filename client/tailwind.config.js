@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [daisyui],
+  plugins: [daisyui, 'tailwind-animate'],
   daisyui: {
     themes: ["light"], // Ensures DaisyUI uses light mode by default
   }

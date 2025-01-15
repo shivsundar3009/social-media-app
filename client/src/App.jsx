@@ -1,11 +1,15 @@
 import React from 'react'
-import LoginPage from './components/LoginPage'
+import Login from './components/LoginPage'
+import SwiperSlider from './components/SwiperSlider'
 
 function App() {
   return (
     <>
 
-    <LoginPage/>
+    {/* <SwiperSlider/> */}
+
+    <Login/>
+
     
     </>
   )
