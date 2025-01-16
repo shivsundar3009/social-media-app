@@ -5,6 +5,7 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}", // Adjust paths as needed
   ],
+  darkMode: 'class',
   theme: {
     extend: {},
   },

@@ -27,8 +27,9 @@ const UserSchema = new mongoose.Schema({
      },
      phoneNumber : {
 
-      type : Number,
+      type : String,
       unique : true,
+      reuired:true,
       match: [/^\d{10}$/, 'Phone number must be exactly 10 digits']
 
      },
@@ -44,6 +45,12 @@ const UserSchema = new mongoose.Schema({
       required : true,
       enum : ['male' , 'female' , 'other']
 
+     },
+     password : {
+
+      type: String,
+      required : true,
+      minlength : 8,
      },
      profilePic : {
       type : String,
