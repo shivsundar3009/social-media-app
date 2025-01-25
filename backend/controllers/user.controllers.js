@@ -31,7 +31,7 @@ export const getUserById = async (req , res) => {
             return res.status(404).json({message: "user not found"});
         };
         
-        res.status(200).json(user);
+        res.status(200).json({user  , success: true});
 
         
     } catch (error) {
@@ -41,10 +41,40 @@ export const getUserById = async (req , res) => {
     }
 };
 
+export const checkIfUserExists = async (req , res) => {
+
+    try {
+
+        const {email , phoneNumber} = req.body;
+
+        const userExists = await User.findOne({
+            $or : [
+                {email},
+                {phoneNumber},
+            ]
+        })
+        
+        if(userExists?.email === email) {
+            return res.status(200).json({success: false , message: "email already exists"});
+        }
+        
+        if(userExists?.phoneNumber === phoneNumber) {
+            return res.status(200).json({success: false , message: "phoneNumber already exists"});
+        }
+        
+        res.status(200).json({success: true , message: "user does not exist"});
+    } catch (error) {
+
+        res.status(500).json({message: "error in checking user existence" , error: error.message });
+        
+    }
+
+};
+
 export const createUser = async (req , res) => {
     try {
 
-        const {fullName , userName , email , phoneNumber , age , gender , password } = req.body;
+        const {fullName , userName , email , phoneNumber , age , gender , password , profilePicture} = req.body;
 
         // const isFullNameAlreadyExists = await User.findOne( {fullName} );
 
@@ -76,43 +106,43 @@ export const createUser = async (req , res) => {
 
         const existingUser = await User.findOne( {
             $or: [
-                {fullName},
+                // {fullName},
                 {userName},
-                {email},
-                {phoneNumber},
+                // {email},
+                // {phoneNumber},
             ]
         })
 
         if(existingUser) {
-            if(existingUser.fullName === fullName) {
-                return res.status(400).json({message: "fullName already exists"});
-            }
+            // if(existingUser.fullName === fullName) {
+            //     return res.status(400).json({message: "fullName already exists"});
+            // }
             if(existingUser.userName === userName) {
-                return res.status(400).json({message: "userName already exists"});
+                return res.status(400).json({message: "userName already exists" , success: false});
             }
-            if(existingUser.email === email) {
-                return res.status(400).json({message: "email already exists"});
-            }
-            if(existingUser.phoneNumber === phoneNumber) {
-                return res.status(400).json({message: "phoneNumber already exists"});
-            } 
+            // if(existingUser.email === email) {
+            //     return res.status(400).json({message: "email already exists"});
+            // }
+            // if(existingUser.phoneNumber === phoneNumber) {
+            //     return res.status(400).json({message: "phoneNumber already exists"});
+            // } 
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         console.log(hashedPassword);
         
-        const user = new User({ fullName, userName, email, phoneNumber, age, gender, password : hashedPassword });
+        const user = new User({ fullName, userName, email, phoneNumber, age, gender, password : hashedPassword , profilePicture});
 
         await user.save();
 
-        res.status(201).json({message: "user created successfully"});
+        res.status(201).json({message: "user created successfully" , success : true});
 
 
         
     } catch (error) {
 
-        res.status(500).json({message: "error in creating user", error: error.message });
+        res.status(500).json({message: "error in creating user", error: error.message ,success : false});
         
     };
 };
@@ -129,7 +159,7 @@ export const deleteUser = async (req , res) => {
             return res.status(404).json({message: "user not found"});
         };
         
-        res.status(200).json({message: "user deleted successfully"});
+        res.status(200).json({message: "user deleted successfully" , success : true});
         
     } catch (error) {
 

@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema({
 
       type : String,
       unique : true,
-      reuired:true,
+      required:true,
       match: [/^\d{10}$/, 'Phone number must be exactly 10 digits']
 
      },
@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema({
       required : true,
       minlength : 8,
      },
-     profilePic : {
+     profilePicture : {
       type : String,
       default : ""
      },

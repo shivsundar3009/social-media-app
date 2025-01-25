@@ -7,7 +7,12 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xlCustom: '1000px',
+      
+      }
+    },
   },
   plugins: [daisyui, 'tailwind-animate'],
   daisyui: {

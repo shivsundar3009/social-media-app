@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route , Outlet} from 'react-router';
 import {LoginPage , Navbar , Footer , SignupPage} from './components';
+import {ToastContainer } from 'react-toastify';
 
 // Define a Layout component to wrap Navbar, main content, and Footer
 const Layout = () => {
@@ -25,6 +26,8 @@ function App() {
           <Route path="signup" element={<SignupPage />} />
         </Route>
       </Routes>
+
+      <ToastContainer />
     </BrowserRouter>
   );
 }

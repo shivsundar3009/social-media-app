@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Instagram, LogIn, Eye, EyeOff } from 'lucide-react';
+import {useNavigate , Link} from "react-router-dom";
+import { toast } from 'react-toastify';
 
+ 
 export default function Login() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
+  const navigate = useNavigate();
 
   const slides = [
     'https://res.cloudinary.com/shivsundar/image/upload/v1736787617/social-media/loginPage/gxaemgxookuq5ovfw91p.png',
@@ -28,7 +32,7 @@ export default function Login() {
       {/* Left section */}
       <div className="relative">
         {/* Mockup image */}
-        <img src={mockupImage} alt="mockupImage" className="h-[600px]" />
+        <img src={mockupImage} alt="mockupImage" className="xlCustom:h-[600px] xlCustom:block hidden" />
 
         {/* Current slide */}
         <img
@@ -106,9 +110,9 @@ export default function Login() {
         </div>
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-300">
           Don't have an account?{' '}
-          <a href="#" className="font-medium text-pink-500 hover:text-pink-600">
+          <Link to="/signup" className="font-medium text-pink-500 hover:text-pink-600">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
