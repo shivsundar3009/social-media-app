@@ -10,7 +10,7 @@ export const userLogin = async (req, res) => {
 
         const user = await User.findOne({
           $or: [
-            { fullName: { $eq: identifier } },  // Ensure exact match
+            // { fullName: { $eq: identifier } },  // Ensure exact match
             { userName: { $eq: identifier } },  // Ensure exact match
             { email: { $eq: identifier } },    // Ensure exact match
             { phoneNumber: { $eq: identifier } } // Ensure exact match
@@ -19,7 +19,7 @@ export const userLogin = async (req, res) => {
 
         console.log(user);
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "User not found" , success: false });
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
@@ -35,11 +35,11 @@ export const userLogin = async (req, res) => {
 
         console.log(jwtToken);
         
-        res.status(200).cookie("token" ,jwtToken).json({message: "user successfullly logged In"})
+        res.status(200).cookie("token" ,jwtToken).json({message: "user successfullly logged In" , success : true});
 
         // res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: "Error in user login", error });
+        res.status(500).json({ message: "Error in user login", error , success : false });
     }
 };
 

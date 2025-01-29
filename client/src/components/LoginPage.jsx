@@ -1,13 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { Instagram, LogIn, Eye, EyeOff } from 'lucide-react';
-import {useNavigate , Link} from "react-router-dom";
+import { Instagram, LogIn, Eye, EyeOff, LeafyGreen } from 'lucide-react';
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useMutation } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import axios from 'axios';
 
- 
 export default function Login() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+
+  const loginSchema = z.object({
+    identifier: z.string().nonempty("This field is required"),
+    password: z.string().nonempty("Password is required"),
+  });
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+  const LoginFunc = async (data) => {
+    // Replace with your API endpoint
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/userLogin`,
+        data,
+        {
+          withCredentials:true
+        }
+      );
+       
+      // console.log(res)
+
+      return res
+      
+    } catch (error) {
+
+      console.log(error)
+
+      toast.error(error.response.data.message)
+
+      console.log(`error in axios ${error}`);
+      
+    }
+   
+
+  
+  }
+
+
+  const handleLogin = (data) =>  {
+
+    // console.log(data);
+
+    loginUser( data , {
+
+      onSuccess: (data) => {
+
+        if(data.data.success) {
+          toast.success('Login successful!');
+          navigate('/homescreen') // Redirect to a dashboard or homepage
+        } else {
+          toast.error('error in logging in user')
+        }
+        // toast.success("Login successful!");
+        // navigate('/dashbo'); // Redirect to a dashboard or homepage
+      },
+      onError: (error) => {
+
+        if( import.meta.env.MODE === 'development') {
+
+          console.log(`error in loginMutateFn ${error}`);
+          console.log(error)
+        }
+        // toast.error(error)
+        // toast.error(error.message || "Something went wrong!");
+      } }
+    )
+
+
+  }
+  
+
+  const { mutate: loginUser , isLoading } = useMutation({
+    mutationFn: LoginFunc
+  });
+
 
   const slides = [
     'https://res.cloudinary.com/shivsundar/image/upload/v1736787617/social-media/loginPage/gxaemgxookuq5ovfw91p.png',
@@ -24,17 +104,14 @@ export default function Login() {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
     }, 3200);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [slides.length]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
       {/* Left section */}
       <div className="relative">
-        {/* Mockup image */}
-        <img src={mockupImage} alt="mockupImage" className="xlCustom:h-[600px] xlCustom:block hidden" />
-
-        {/* Current slide */}
+        <img src={mockupImage} alt="mockup" className="xlCustom:h-[600px] xlCustom:block hidden" />
         <img
           src={slides[currentSlide]}
           alt={`slide-${currentSlide}`}
@@ -48,34 +125,41 @@ export default function Login() {
           <Instagram className="w-16 h-16 text-pink-500" />
         </div>
         <h2 className="text-2xl font-bold text-center mb-8 dark:text-gray-400">Log in to your account</h2>
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit(handleLogin)}>
           <div>
             <input
-              type="email"
-              placeholder="Email address"
-              className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
+              type="text"
+              placeholder="Enter your Email / userName / Phone"
+              {...register('identifier')}
+              className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
+            {errors.identifier && <p className="text-sm text-red-500 mt-1">{errors.identifier.message}</p>}
           </div>
           <div className="relative">
             <input
-              type={passwordVisible ? 'text' : 'password'} // Toggle input type based on visibility
+              type={passwordVisible ? 'text' : 'password'}
               placeholder="Password"
-              className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
+              {...register('password')}
+              className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
             <div
-              onClick={() => setPasswordVisible(!passwordVisible)} // Toggle visibility on click
+              onClick={() => setPasswordVisible(!passwordVisible)}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
             >
               {passwordVisible ? (
-                <Eye className="text-gray-400 dark:text-gray-300" />     
+                <Eye className="text-gray-400 dark:text-gray-300" />
               ) : (
                 <EyeOff className="text-gray-400 dark:text-gray-300" />
-                
               )}
             </div>
+            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
           </div>
-          <button className="w-full py-3 rounded-md bg-pink-500 hover:bg-pink-600 text-gray-200 flex items-center justify-center">
-            <LogIn className="mr-2 h-4 w-4" /> Log In
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 rounded-md bg-pink-500 hover:bg-pink-600 text-gray-200 flex items-center justify-center"
+          >
+            {isLoading ? 'Loading...' : <><LogIn className="mr-2 h-4 w-4" /> Log In</>}
           </button>
         </form>
         <div className="mt-6">
