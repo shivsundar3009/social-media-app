@@ -5,10 +5,16 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}", // Adjust paths as needed
   ],
+  darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xlCustom: '1000px',
+      
+      }
+    },
   },
-  plugins: [daisyui],
+  plugins: [daisyui, 'tailwind-animate'],
   daisyui: {
     themes: ["light"], // Ensures DaisyUI uses light mode by default
   }
