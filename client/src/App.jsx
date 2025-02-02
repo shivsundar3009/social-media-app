@@ -1,36 +1,70 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route , Outlet} from 'react-router';
-import {LoginPage , Navbar , Footer , SignupPage , Homescreen} from './components';
-import {ToastContainer } from 'react-toastify';
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate , useLocation } from "react-router-dom";
+import { LoginPage, Sidebar, Footer, SignupPage, Homescreen, Settings , NotFound } from "./components";
+import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
 
-// Define a Layout component to wrap Navbar, main content, and Footer
-const Layout = () => {
+// Protected Route Component
+const ProtectedRoute = ({ children, loggedInUser }) => {
+  return loggedInUser ? children : <Navigate to="/" />;
+};
+
+// Layout Component
+const Layout = ({ loggedInUser }) => {
+
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current route
+
+  useEffect(() => {
+    if (loggedInUser && (location.pathname === "/" || location.pathname === "/signup")) {
+      navigate("/homescreen"); // Redirect only from login or signup
+    }
+  }, [loggedInUser, location.pathname, navigate]); 
+
   return (
-    <>
-      <Navbar /> {/* Always visible */}
-      <main>
-        <Outlet /> {/* Render content inside here */}
-      </main>
-      <Footer /> {/* Always visible */}
-    </>
+    <div className={` ${loggedInUser ? "flex w-full" : ""}`}>
+
+      {loggedInUser && 
+      <div className="w-1/5"> 
+        <Sidebar/>
+      </div>} {/* Show Sidebar only when logged in */}
+      <div className={loggedInUser ? "w-full min-h-screen" : ""}>
+        <main>
+          <Outlet /> {/* Renders nested routes */}
+        </main>
+        <Footer />
+      </div>
+    </div>
   );
 };
 
 function App() {
+  const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  
+
+  return (
+    <Routes>
+
+      {/* Layout wraps all routes */}
+      <Route path="/" element={<Layout loggedInUser={loggedInUser} />}>
+        <Route index element={<LoginPage />} /> {/* Default route */}
+        <Route path="signup" element={<SignupPage />} />
+
+        {/* Protected Routes */}
+        <Route path="homescreen" element={<ProtectedRoute loggedInUser={loggedInUser}><Homescreen /></ProtectedRoute>} />
+        <Route path="settings" element={<ProtectedRoute loggedInUser={loggedInUser}><Settings /></ProtectedRoute>} />
+
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default function RootApp() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Define Layout and nested routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LoginPage />} /> {/* Default route inside Layout */}
-          <Route path="signup" element={<SignupPage />} />
-          <Route path="homescreen" element={<Homescreen />} />
-        </Route>
-      </Routes>
-
+      <App />
       <ToastContainer />
     </BrowserRouter>
   );
 }
-
-export default App;

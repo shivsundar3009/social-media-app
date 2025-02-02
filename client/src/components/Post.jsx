@@ -1,141 +1,117 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
 
-const Post = () => {
+const InstagramPost = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [comment, setComment] = useState('');
-
-  // Sample data - in a real app, this would come from props or an API
-  const post = {
-    username: 'johndoe',
-    userAvatar: '/api/placeholder/32/32',
-    location: 'New York, NY',
-    image: 'https://plus.unsplash.com/premium_photo-1679397743946-ef0f12e366c6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    likes: 1234,
-    caption: 'Beautiful day in the city! 🌆 #nyc #citylife',
-    comments: [
-      { username: 'jane_smith', text: 'Amazing view! 😍' },
-      { username: 'mike_wilson', text: 'Where exactly is this?' }
-    ],
-    timePosted: '2 HOURS AGO'
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-  };
-
-  const handleComment = (e) => {
-    e.preventDefault();
-    if (comment.trim()) {
-      // In a real app, this would send the comment to an API
-      console.log('New comment:', comment);
-      setComment('');
-    }
-  };
 
   return (
-    <div className="max-w-xl bg-white border rounded-lg shadow-sm mb-4">
+    <div className="max-w-xl bg-white rounded-lg shadow mb-6">
       {/* Post Header */}
-      <div className="flex items-center justify-between p-3">
+      <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
-          <img 
-            src={post.userAvatar} 
-            alt={post.username} 
-            className="w-8 h-8 rounded-full"
-          />
-          <div>
-            <p className="font-semibold text-sm">{post.username}</p>
-            <p className="text-xs text-gray-500">{post.location}</p>
+          <div className="w-8 h-8 bg-gradient-to-tr from-yellow-400 to-purple-600 rounded-full p-[2px]">
+            <div className="w-full h-full bg-white rounded-full p-[2px]">
+              <img
+                src="/api/placeholder/32/32"
+                alt={`${post.username}'s profile`}
+                className="w-full h-full rounded-full object-cover"
+              />
+            </div>
           </div>
+          <span className="font-semibold text-sm">{post.username}</span>
         </div>
-        <button className="text-gray-500">
+        <button className="text-gray-600">
           <MoreHorizontal size={20} />
         </button>
       </div>
 
       {/* Post Image */}
-      <img 
-        src={post.image} 
-        alt="Post content" 
-        className="w-full object-cover"
-      />
+      <div className="relative">
+        <img
+          src="https://images.unsplash.com/photo-1738070593158-9e84a49e7e60?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzNnx8fGVufDB8fHx8fA%3D%3D"
+          className="w-full h-[600px] object-cover"
+        />
+      </div>
 
-      {/* Action Buttons */}
-      <div className="p-3">
-        <div className="flex justify-between mb-2">
-          <div className="flex space-x-4">
-            <button onClick={handleLike}>
-              <Heart 
-                size={24} 
-                className={`${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-700'}`}
-              />
+      {/* Post Actions */}
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setIsLiked(!isLiked)}
+              className={`hover:text-gray-600 ${isLiked ? 'text-red-500' : 'text-gray-700'}`}
+            >
+              <Heart size={24} fill={isLiked ? "currentColor" : "none"} />
             </button>
-            <button>
-              <MessageCircle size={24} className="text-gray-700" />
+            <button className="text-gray-700 hover:text-gray-600">
+              <MessageCircle size={24} />
             </button>
-            <button>
-              <Send size={24} className="text-gray-700" />
+            <button className="text-gray-700 hover:text-gray-600">
+              <Share2 size={24} />
             </button>
           </div>
-          <button onClick={handleSave}>
-            <Bookmark 
-              size={24} 
-              className={`${isSaved ? 'fill-black text-black' : 'text-gray-700'}`}
-            />
+          <button 
+            onClick={() => setIsSaved(!isSaved)}
+            className={`text-gray-700 hover:text-gray-600 ${isSaved ? 'text-black' : ''}`}
+          >
+            <Bookmark size={24} fill={isSaved ? "currentColor" : "none"} />
           </button>
         </div>
 
         {/* Likes */}
-        <p className="font-semibold text-sm mb-2">
-          {post.likes.toLocaleString()} likes
-        </p>
+        <div className="mb-2">
+          <span className="font-semibold text-sm">{post.likes.toLocaleString()} likes</span>
+        </div>
 
         {/* Caption */}
-        <p className="text-sm mb-2">
-          <span className="font-semibold mr-2">{post.username}</span>
-          {post.caption}
-        </p>
+        <div className="mb-2">
+          <span className="font-semibold text-sm mr-2">{post.username}</span>
+          <span className="text-sm">{post.caption}</span>
+        </div>
 
         {/* Comments */}
-        <div className="space-y-1 mb-2">
-          {post.comments.map((comment, index) => (
-            <p key={index} className="text-sm">
-              <span className="font-semibold mr-2">{comment.username}</span>
-              {comment.text}
-            </p>
-          ))}
+        <div className="text-gray-500 text-sm mb-2">
+          View all {post.commentCount} comments
         </div>
 
         {/* Timestamp */}
-        <p className="text-xs text-gray-500 uppercase mb-2">
-          {post.timePosted}
-        </p>
-
-        {/* Comment Input */}
-        <form onSubmit={handleComment} className="flex items-center border-t pt-3">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="flex-1 text-sm outline-none"
-          />
-          <button 
-            type="submit"
-            disabled={!comment.trim()}
-            className={`text-blue-500 font-semibold text-sm ${!comment.trim() ? 'opacity-50' : ''}`}
-          >
-            Post
-          </button>
-        </form>
+        <div className="text-gray-400 text-xs uppercase">
+          {post.timestamp}
+        </div>
       </div>
     </div>
   );
 };
 
-export default Post;
+// Feed component that renders multiple posts
+const InstagramFeed = () => {
+  const samplePosts = [
+    {
+      id: 1,
+      username: "johndoe",
+      likes: 1234,
+      caption: "Beautiful sunset at the beach! 🌅 #nature #photography",
+      commentCount: 42,
+      timestamp: "2 hours ago"
+    },
+    {
+      id: 2,
+      username: "janedoe",
+      likes: 856,
+      caption: "Perfect morning with coffee ☕️ #coffeetime",
+      commentCount: 23,
+      timestamp: "4 hours ago"
+    }
+  ];
+
+  return (
+    <div className="max-w-xl mx-auto p-4">
+      {samplePosts.map(post => (
+        <InstagramPost key={post.id} post={post} />
+      ))}
+    </div>
+  );
+};
+
+export default InstagramFeed;

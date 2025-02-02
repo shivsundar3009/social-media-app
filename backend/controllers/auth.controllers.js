@@ -34,8 +34,10 @@ export const userLogin = async (req, res) => {
         const jwtToken = generateJwtToken(payload);
 
         console.log(jwtToken);
+
+        const { password : userPass , ...userData} = user.toObject();
         
-        res.status(200).cookie("token" ,jwtToken).json({message: "user successfullly logged In" , success : true});
+        res.status(200).cookie("token" ,jwtToken).json({message: "user successfullly logged In" , success : true , userData});
 
         // res.status(200).json(user);
     } catch (error) {
