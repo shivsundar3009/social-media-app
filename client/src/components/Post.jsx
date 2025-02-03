@@ -1,141 +1,219 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
+import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
 
-const Post = () => {
+// Function to fetch posts from the backend
+const fetchPosts = async (pageParam) => {
+
+  console.log("pageParam inside fetchposts ln 14" , pageParam);
+  const response = await axios.get(
+    `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/getAllPosts?page=${pageParam}`
+  );
+  console.log(" response Inside fetchProducts ln 18",response.data);
+
+  return response.data;
+};
+
+// InstagramPost component that renders individual posts
+const InstagramPost = ({ post }) => {
+  console.log('instapraPOST INSIDE 25',post);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [comment, setComment] = useState('');
-
-  // Sample data - in a real app, this would come from props or an API
-  const post = {
-    username: 'johndoe',
-    userAvatar: '/api/placeholder/32/32',
-    location: 'New York, NY',
-    image: 'https://plus.unsplash.com/premium_photo-1679397743946-ef0f12e366c6?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    likes: 1234,
-    caption: 'Beautiful day in the city! 🌆 #nyc #citylife',
-    comments: [
-      { username: 'jane_smith', text: 'Amazing view! 😍' },
-      { username: 'mike_wilson', text: 'Where exactly is this?' }
-    ],
-    timePosted: '2 HOURS AGO'
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-  };
-
-  const handleComment = (e) => {
-    e.preventDefault();
-    if (comment.trim()) {
-      // In a real app, this would send the comment to an API
-      console.log('New comment:', comment);
-      setComment('');
-    }
-  };
+  const timeAgo = formatDistanceToNow(new Date(post.createdAt))
+  .replace(/^about /, "") .replace(" seconds", "s")
+  .replace(" second", "s")
+  .replace(" minutes", "m")
+  .replace(" minute", "m")
+  .replace(" hours", "h")
+  .replace(" hour", "h")
+  .replace(" days", "d")
+  .replace(" day", "d")
+  .replace(" weeks", "w")
+  .replace(" week", "w")
+  .replace(" months", "mo")
+  .replace(" month", "mo")
+  .replace(" years", "y")
+  .replace(" year", "y");;;
 
   return (
-    <div className="max-w-xl bg-white border rounded-lg shadow-sm mb-4">
+    <div className="max-w-xl bg-white rounded-lg shadow mb-6">
       {/* Post Header */}
-      <div className="flex items-center justify-between p-3">
+      <div className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
-          <img 
-            src={post.userAvatar} 
-            alt={post.username} 
-            className="w-8 h-8 rounded-full"
-          />
-          <div>
-            <p className="font-semibold text-sm">{post.username}</p>
-            <p className="text-xs text-gray-500">{post.location}</p>
+          <div className="w-8 h-8 bg-gradient-to-tr from-yellow-400 to-purple-600 rounded-full p-[2px]">
+            <div className="w-full h-full bg-white rounded-full p-[2px]">
+              <img
+                src={post.owner.profilePicture}
+                alt={`${post.owner.userName}'s profile`}
+                className="w-full h-full rounded-full object-cover"
+              />
+            </div>
           </div>
+          <span className="font-semibold text-sm">{post.owner.userName}</span>
+          <span className="text-xs text-gray-400 ml-2">{timeAgo}</span>
         </div>
-        <button className="text-gray-500">
+        <button className="text-gray-600">
           <MoreHorizontal size={20} />
         </button>
       </div>
 
-      {/* Post Image */}
-      <img 
-        src={post.image} 
-        alt="Post content" 
-        className="w-full object-cover"
-      />
+      {/* Post Images / Carousel */}
+      <div className="relative">
+        <Swiper navigation modules={[Navigation]} className="w-full rounded-lg overflow-hidden">
+          {post.media.map((mediaItem, index) => (
+            <SwiperSlide key={index}>
+              {mediaItem.mediaType === 'image' ? (
+                <img
+                  src={mediaItem.url}
+                  alt={`Post media ${index + 1}`}
+                  className="w-full h-[450px] object-contain"
+                />
+              ) : (
+                <video src={mediaItem.url} className="w-full h-[450px] object-contain" controls />
+              )}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
-      {/* Action Buttons */}
-      <div className="p-3">
-        <div className="flex justify-between mb-2">
-          <div className="flex space-x-4">
-            <button onClick={handleLike}>
-              <Heart 
-                size={24} 
-                className={`${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-700'}`}
-              />
+      {/* Post Actions */}
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setIsLiked(!isLiked)}
+              className={`hover:text-gray-600 ${isLiked ? 'text-red-500' : 'text-gray-700'}`}
+            >
+              <Heart size={24} fill={isLiked ? 'currentColor' : 'none'} />
             </button>
-            <button>
-              <MessageCircle size={24} className="text-gray-700" />
+            <button className="text-gray-700 hover:text-gray-600">
+              <MessageCircle size={24} />
             </button>
-            <button>
-              <Send size={24} className="text-gray-700" />
+            <button className="text-gray-700 hover:text-gray-600">
+              <Share2 size={24} />
             </button>
           </div>
-          <button onClick={handleSave}>
-            <Bookmark 
-              size={24} 
-              className={`${isSaved ? 'fill-black text-black' : 'text-gray-700'}`}
-            />
+          <button
+            onClick={() => setIsSaved(!isSaved)}
+            className={`text-gray-700 hover:text-gray-600 ${isSaved ? 'text-black' : ''}`}
+          >
+            <Bookmark size={24} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
         </div>
 
         {/* Likes */}
-        <p className="font-semibold text-sm mb-2">
-          {post.likes.toLocaleString()} likes
-        </p>
+        <div className={`mb-2 ${post.likedBy.length > 0 ? 'block' : 'hidden'}`}>
+          <span className="font-semibold text-sm">{post.likedBy.length} likes</span>
+        </div>
 
         {/* Caption */}
-        <p className="text-sm mb-2">
-          <span className="font-semibold mr-2">{post.username}</span>
-          {post.caption}
-        </p>
+        <div className="mb-2">
+          <span className="font-semibold text-sm mr-2">{post.owner.userName}</span>
+          <span className="text-sm">{post.caption}</span>
+        </div>
 
         {/* Comments */}
-        <div className="space-y-1 mb-2">
-          {post.comments.map((comment, index) => (
-            <p key={index} className="text-sm">
-              <span className="font-semibold mr-2">{comment.username}</span>
-              {comment.text}
-            </p>
-          ))}
+        <div className={`text-gray-500 text-sm mb-2 ${post.comments.length > 0 ? 'block' : 'hidden'}`}>
+          View all {post.comments.length} comments
         </div>
 
         {/* Timestamp */}
-        <p className="text-xs text-gray-500 uppercase mb-2">
-          {post.timePosted}
-        </p>
-
-        {/* Comment Input */}
-        <form onSubmit={handleComment} className="flex items-center border-t pt-3">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="flex-1 text-sm outline-none"
-          />
-          <button 
-            type="submit"
-            disabled={!comment.trim()}
-            className={`text-blue-500 font-semibold text-sm ${!comment.trim() ? 'opacity-50' : ''}`}
-          >
-            Post
-          </button>
-        </form>
+        {/* <div className="text-gray-400 text-xs uppercase">{new Date(post.createdAt).toLocaleString()}</div> */}
       </div>
     </div>
   );
 };
 
-export default Post;
+// Feed component that renders multiple posts with Load More button
+const InstagramFeed = () => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    // hasPreviousPage,
+    isFetchingNextPage,
+    // status,
+    isLoading,
+    isError,
+    ...result
+  } = useInfiniteQuery({
+    queryKey: ['posts'],
+    queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam), 
+    getNextPageParam: (lastPage , allPages) => {
+      console.log("lastPage", lastPage);
+      console.log("allPages", allPages);
+      return lastPage.nextPage ? lastPage.nextPage : null;
+    }, // Auto-fetch next page
+  });
+ 
+  console.log('130 hsanectPAGE',hasNextPage);
+  // console.log(hasPreviousPage);
+  // console.log("data returned from infinite",data);
+  console.log("result gett",result);
+
+  // const [loading, setLoading] = useState(false);
+
+  // const data = [];
+
+  // Handle Load More Button Click
+  const handleLoadMore = () => {
+    if (!isFetchingNextPage && data) {
+      // setLoading(true);
+      fetchNextPage();
+      // setLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p>Loading posts...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p>Failed to fetch posts. Please try again later.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-xl mx-auto p-4">
+      {data?.pages?.map((page, pageIndex) =>
+        page.posts.map((post) => (
+          <div key={post._id}>
+            <InstagramPost post={post} />
+          </div>
+        ))
+      )}
+
+      {/* Load More Button */}
+      {hasNextPage && !isFetchingNextPage && (
+        <button
+          onClick={handleLoadMore}
+          className="w-full text-center py-3 bg-blue-500 text-white rounded-full mt-4"
+        >
+          {isLoading ? 'Loading...' : 'Load More'}
+        </button>
+      )}
+
+      {/* Loading More Indicator */}
+      {isFetchingNextPage && (
+        <div className="text-center my-4">
+          <p>Loading more posts...</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default InstagramFeed;

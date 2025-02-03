@@ -7,11 +7,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
+import { Navbar} from "./index"
+import { useSelector , useDispatch} from 'react-redux'
+import { login } from '../redux/features/userSlice';
 
 export default function Login() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // const loggedInUser = useSelector((state) => state.User.loggedInUser);
+
+  // if(loggedInUser) {
+  //   navigate('/homescreen');
+  // }
 
   const loginSchema = z.object({
     identifier: z.string().nonempty("This field is required"),
@@ -59,8 +69,15 @@ export default function Login() {
 
       onSuccess: (data) => {
 
-        if(data.data.success) {
+
+
+        if(data?.data?.success) {
+          console.log(`login success after dat`,data);
+
+         dispatch(login(data?.data?.userData)) 
+
           toast.success('Login successful!');
+
           navigate('/homescreen') // Redirect to a dashboard or homepage
         } else {
           toast.error('error in logging in user')
@@ -108,6 +125,8 @@ export default function Login() {
   }, [slides.length]);
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
       {/* Left section */}
       <div className="relative">
@@ -200,5 +219,7 @@ export default function Login() {
         </p>
       </div>
     </div>
+
+    </>
   );
 }

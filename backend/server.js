@@ -14,6 +14,13 @@ const app = express();
 
 dotenv.config();
 
+console.log(" env cloundinary server file",
+  process.env.CLOUDINARY_API_KEY ,
+  process.env.CLOUDINARY_CLOUD_NAME,
+  process.env.CLOUDINARY_API_SECRET,
+
+);
+
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
@@ -33,6 +40,9 @@ app.use('/api/v1/user' , userRoutes)
 
 import authRoutes from './routes/auth.routes.js';
 app.use('/api/v1/auth' , authRoutes)
+
+import postRoutes from './routes/post.routes.js';
+app.use('/api/v1/post' , postRoutes)
 
 
 app.listen(port, () => {

@@ -11,7 +11,11 @@ export default {
       screens: {
         xlCustom: '1000px',
       
-      }
+      },
+      animation: {
+        'spin-slow': 'spin 3s linear infinite', // Adjust speed (default is 1s)
+        'spin-fast': 'spin 500ms linear infinite', // Faster spin
+      },
     },
   },
   plugins: [daisyui, 'tailwind-animate'],

@@ -1,4 +1,5 @@
 import express from 'express';
+import upload from '../middlewares/postMulter.middleware.js';
 
 import {getAllUsers , createUser , deleteUser , getUserById, checkIfUserExists} from "../controllers/user.controllers.js";
 
@@ -10,7 +11,7 @@ router.get("/getAllUsers" , authenticateUser ,getAllUsers);
 
 router.get("/getUserById/:userId" , getUserById);
 
-router.post('/createUser', createUser);
+router.post('/createUser', upload.single('profilePicture'),  createUser);
 
 router.post('/checkIfUserExists', checkIfUserExists);
 

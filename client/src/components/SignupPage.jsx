@@ -8,13 +8,26 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Navbar} from "./index"
 
 export default function SignupPage() {
 
   const navigate = useNavigate();
+  const [ uploadedProfilePicture , setUploadedProfilePicture] = useState(null);
+
+  const handleProfilePictureUpload = (e) => { 
+
+    const file = e.target.files[0];
+
+    console.log(file);
+
+    setUploadedProfilePicture(file)
+
+  };
 
   const checkIfUserExists = async (data) => {
     try {
+      
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/checkIfUserExists`,
         data,
@@ -36,8 +49,6 @@ export default function SignupPage() {
     age: 0,
     gender: "",
     password: "",
-    userName: "",
-    profilePicture: "",
   });
 
   const stepSchemas = [
@@ -75,9 +86,7 @@ export default function SignupPage() {
     }),
     z.object({
       profilePicture: z
-        .string()
-        .url({ message: "Profile picture must be a valid URL." })
-        .nonempty({ message: "Profile picture URL is required." }),
+        .string(),
       userName: z
         .string()
         .min(3, { message: "Username must be at least 3 characters long." })
@@ -106,21 +115,42 @@ export default function SignupPage() {
 
     try {
 
+      console.log("data arrived in create User Mute" ,data);
+
+      const formData = new FormData();
+
+      // console.log(jaghoo);
+
+      for(let key in data){
+        formData.append(key, data[key]);
+      }
+      
+      if(uploadedProfilePicture) {
+        formData.append('profilePicture', uploadedProfilePicture);
+      }
+      // data.append(uploadedProfilePicture);
+       
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/createUser`,
-        data,
-        {}
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": 'multipart/form-data'
+          },
+        }
       );
       
       return res;
       
     } catch (error) {
 
-      return error
-      
-    }
+
+      setUploadedProfilePicture(null);
+
+      console.log(`error in createUser func` , error);
    
-  }
+  } };
 
   const { mutate : registerUser } = useMutation({
     mutationFn: createUser,
@@ -128,37 +158,51 @@ export default function SignupPage() {
 
   const handleSubmitStep1 = (data) => {
 
-    setFormData({
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      fullName: data.fullName,
-      age: data.age,
-      gender: data.gender,
-      password: data.password,
+    try {
 
-    })
-    // console.log("formData in handleSubmit",formData);
-    console.log(data);
+      console.log(data);
 
-    const checkData = {
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-    };
+      console.log(`step 1 working`);
 
-         checkUser(checkData, {
-      onSuccess: (data) => {
-        console.log(data);
-        
-        // console.log("formData in mutationSuccess",formData);
-        // if(data.d)
-
-        // alert('mutate working')
-
-        if (data?.data?.success) {
-
-          // console.log("data is successfully saved in formData object" , formData);
-          setStep(2);
-        } else {
+      setFormData({
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        fullName: data.fullName,
+        age: data.age,
+        gender: data.gender,
+        password: data.password,
+  
+      })
+      console.log(data);
+  
+      const checkData = {
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+      };
+  
+           checkUser(checkData, {
+        onSuccess: (data) => {
+          console.log(data);
+          
+          if (data?.data?.success) {
+  
+            setStep(2);
+          } else {
+            setFormData({
+              email: "",
+              number: "",
+              fullName: "",
+              age: 0,
+              gender: "",
+              password: "",
+            })
+            toast.error(data?.data?.message);
+          }
+  
+  
+        },
+        onError: (error) => {
+     
           setFormData({
             email: "",
             number: "",
@@ -167,94 +211,76 @@ export default function SignupPage() {
             gender: "",
             password: "",
           })
-          toast.error(data?.data?.message);
-          // alert(data.data.message);
-        }
+          console.log("formData in mutationFailed",error);
+        },
+      });
 
 
-      },
-      onError: (error) => {
+      
+    } catch (error) {
+
+      console.log('error in submit 1',error);
+      
+    }
+
    
-        setFormData({
-          email: "",
-          number: "",
-          fullName: "",
-          age: 0,
-          gender: "",
-          password: "",
-        })
-        // console.log("formData in mutationFailed",formData);
-        // alert(`alert in mutation : ${error.message}`);
-      },
-    });
-    // setStep(2);
-
-    // console.log(data);
-    // // console.log('Submitted data:', formData);
-    // alert('Signup completed successfully! step 1');
-  };
-
-  // useEffect(() => {
-  //   console.log("Updated formData useEFFECT:", formData);
-  // }, [formData]);
-
-  const handleSubmitStep2 = (data) => {
-
-    console.log(formData);
-
-    setFormData({
-      ...formData,
-      profilePicture: data.profilePicture,
-      userName: data.userName,
-    });
     
-    console.log('data from step2' , data);
-
-    registerUser({
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      fullName: formData.fullName,
-      age: formData.age,
-      gender: formData.gender,
-      password: formData.password,
-      profilePicture: data.profilePicture,
-      userName: data.userName,
-    }, {
-       
-      onSuccess : (data) => {
-           
-        console.log(data); 
-        
-        if(data?.data?.success){ 
-
-          toast.success('Signup completed successfully!');
-
-          // alert('mutate working')
-          navigate('/')
+  };
 
  
-        } else {
+  const handleSubmitStep2 = (data) => {
 
-          console.log(`success failed error ` , data);
-          toast.error(data?.response?.data?.message);
-          // alert(data.data.message);
+    try {
+      // console.log(`data from step 2 ` ,data);
+      
+      console.log('submit 2 Working');
+  
+      // setFormData({
+      //   ...formData,
+      //   // profilePicture: data.profilePicture,
+      //   userName: data.userName,
+      // });
+      
+      console.log('data from step2 :' , data);
+  
+      registerUser({
+       ...formData,
+        // profilePicture: data.profilePicture,
+        userName: data.userName,
+      }, {
+         
+        onSuccess : (data) => {
+             
+          console.log(data); 
+          
+          if(data?.data?.success){ 
+  
+            toast.success('Signup completed successfully!');
+  
+            navigate('/')
+  
+   
+          } else {
+  
+            console.log(`success failed error ` , data?.response?.data?.error);
+            toast.error(data?.response?.data?.message);
+          }
+  
+  
+        },
+        onError : (error) => {
+          alert(`alert in mutation : ${error.message}`);
         }
-
-
-      },
-      onError : (error) => {
-        // console.log("formData in mutationFailed",formData);
-        alert(`alert in mutation : ${error.message}`);
-      }
-    })
+      })
+    } catch (error) {
+       
+      console.log(`error in step 2 : ${error}`);
+    }
        
 
   };
 
-  // const handleSubmit = () => {
-  //   // console.log('Submitted data:', formData);
-  //   alert('Signup completed successfully!');
-  // }
+ 
 
   const [profilePictures, setProfilePictures] = useState([]);
 
@@ -329,10 +355,13 @@ export default function SignupPage() {
   
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
       {/* Left section */}
       <div className="relative">
         <img src={mockupImage} alt="mockupImage" className="xlCustom:h-[600px] xlCustom:block hidden"  />
+    
         <img
           src={slides[currentSlide]}
           alt={`slide-${currentSlide}`}
@@ -529,6 +558,7 @@ export default function SignupPage() {
                     onChange={() => {
                       setProfileOption("selectYourProfilePicture");
                       setSelctedProfilePicture("");
+                      setValue("profilePicture", "");
                     }}
                     className="form-radio text-pink-500"
                   />
@@ -547,6 +577,7 @@ export default function SignupPage() {
                     onChange={() => {
                       setProfileOption("uploadYourProfilePicture");
                       setSelctedProfilePicture("");
+                      setValue("profilePicture", "");
                     }}
                     className="form-radio text-pink-500"
                   />
@@ -584,7 +615,7 @@ export default function SignupPage() {
                 </label>
                 <input
                   type="file"
-                  name="profilePictureUpload"
+                  name="profilePicture"
                   className="w-full mt-2 p-3 border border-gray-300 dark:border-gray-500 dark:bg-[#121212] rounded-md text-gray-200"
                   onChange={(e) => handleProfilePictureUpload(e)} // Handle upload later
                 />
@@ -611,5 +642,6 @@ export default function SignupPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
