@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt  from 'bcrypt';
-import upload from '../middlewares/multer.middleware.js'
-import uploadImage from "../utils/cloudinary.js";
+// import upload from '../middlewares/multer.middleware.js'
+import uploadImage from "../utils/profilePictureCloudinary.js";
 
 export const getAllUsers = async (req , res) => {
     try {
@@ -75,20 +75,22 @@ export const checkIfUserExists = async (req , res) => {
 
 export const createUser = async (req , res) => {
     try {
+        const {fullName , userName , email , phoneNumber , age , gender , password} = req.body;
 
-        console.log('data recieved in backend :' ,req.file);
+        // console.log('data recieved in backend :' ,req.file , userName) ;
 
         let profileImageUrl = null;
 
+        const folder = `social-media/users/${userName}/profilePic`
+
         if (req.file) {
-            const cloudinaryResponse = await uploadImage(req.file);
+            const cloudinaryResponse = await uploadImage(req.file , folder);
             profileImageUrl = cloudinaryResponse.secure_url; // Get the URL of the uploaded image
             console.log(profileImageUrl);
         }
 
         // console.log(profilePicture);
 
-        const {fullName , userName , email , phoneNumber , age , gender , password} = req.body;
 
         // const isFullNameAlreadyExists = await User.findOne( {fullName} );
 

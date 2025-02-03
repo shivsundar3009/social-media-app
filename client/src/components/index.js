@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
 import NotFound from "./NotFound";
+import CreatePost from "./CreatePost";
 
 
-export {Navbar , Footer, LoginPage, SignupPage , Homescreen , UserProfile , Sidebar , Settings , NotFound};
+export {Navbar , Footer, LoginPage, SignupPage , Homescreen , UserProfile , Sidebar , Settings , NotFound , CreatePost};

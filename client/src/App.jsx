@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate , useLocation } from "react-router-dom";
-import { LoginPage, Sidebar, Footer, SignupPage, Homescreen, Settings , NotFound } from "./components";
+import { LoginPage, Sidebar, Footer, SignupPage, Homescreen, Settings , NotFound , CreatePost } from "./components";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 
@@ -53,6 +53,7 @@ function App() {
         {/* Protected Routes */}
         <Route path="homescreen" element={<ProtectedRoute loggedInUser={loggedInUser}><Homescreen /></ProtectedRoute>} />
         <Route path="settings" element={<ProtectedRoute loggedInUser={loggedInUser}><Settings /></ProtectedRoute>} />
+        <Route path="createPost" element={<ProtectedRoute loggedInUser={loggedInUser}><CreatePost /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

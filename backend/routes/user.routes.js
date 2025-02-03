@@ -1,5 +1,5 @@
 import express from 'express';
-import upload from '../middlewares/multer.middleware.js';
+import upload from '../middlewares/postMulter.middleware.js';
 
 import {getAllUsers , createUser , deleteUser , getUserById, checkIfUserExists} from "../controllers/user.controllers.js";
 

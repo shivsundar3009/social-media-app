@@ -56,7 +56,7 @@ function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link to="/new-post" className="flex items-center p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+          <Link to="/createPost" className="flex items-center p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
             <PlusCircle className="mr-2 hidden md:block" size={20} />
             <span className="hidden lg:block">Create Post</span>
           </Link>
