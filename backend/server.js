@@ -4,10 +4,7 @@ import { connectDB } from './db/db.js';
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 
-const corsOptions = {
-  origin: 'http://localhost:5173',
-  credentials: true
-}
+
 
 
 const app = express();
@@ -18,8 +15,14 @@ console.log(" env cloundinary server file",
   process.env.CLOUDINARY_API_KEY ,
   process.env.CLOUDINARY_CLOUD_NAME,
   process.env.CLOUDINARY_API_SECRET,
+  process.env.FRONTEND_URL
 
 );
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}
 
 app.use(cors(corsOptions));
 
@@ -43,6 +46,9 @@ app.use('/api/v1/auth' , authRoutes)
 
 import postRoutes from './routes/post.routes.js';
 app.use('/api/v1/post' , postRoutes)
+
+import messagingRoutes from './routes/messaging.routes.js';
+app.use('/api/v1/messaging', messagingRoutes);
 
 
 app.listen(port, () => {

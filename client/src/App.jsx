@@ -25,14 +25,14 @@ const Layout = ({ loggedInUser }) => {
     <div className={` ${loggedInUser ? "flex w-full" : ""}`}>
 
       {loggedInUser && 
-      <div className="w-1/5"> 
+      <div className="xl:w-1/6 "> 
         <Sidebar/>
       </div>} {/* Show Sidebar only when logged in */}
       <div className={loggedInUser ? "w-full min-h-screen" : ""}>
         <main>
           <Outlet /> {/* Renders nested routes */}
         </main>
-        <Footer />
+        <Footer className=""/>
       </div>
     </div>
   );

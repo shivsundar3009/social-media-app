@@ -1,13 +1,19 @@
 import express from 'express';
 import upload from '../middlewares/postMulter.middleware.js';
 
-import {getAllUsers , createUser , deleteUser , getUserById, checkIfUserExists} from "../controllers/user.controllers.js";
+import {getAllUsers , createUser , deleteUser , getUserById, checkIfUserExists, followUser, unFollowUser} from "../controllers/user.controllers.js";
 
 import { authenticateUser } from '../utils/authenticateUser.js';
 
 const router = express.Router();
 
 router.get("/getAllUsers" , authenticateUser ,getAllUsers);
+
+router.post("/followUser/:toBeFollowedUserId" , authenticateUser , followUser);
+
+router.post("/followUser/:toBeUnFollowedUserId" , authenticateUser , unFollowUser);
+
+router.post("/unFollowUser" , authenticateUser , unFollowUser);
 
 router.get("/getUserById/:userId" , getUserById);
 
