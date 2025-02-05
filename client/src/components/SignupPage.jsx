@@ -19,7 +19,7 @@ export default function SignupPage() {
 
     const file = e.target.files[0];
 
-    console.log(file);
+    // console.log(file);
 
     setUploadedProfilePicture(file)
 
@@ -115,7 +115,7 @@ export default function SignupPage() {
 
     try {
 
-      console.log("data arrived in create User Mute" ,data);
+      // console.log("data arrived in create User Mute" ,data);
 
       const formData = new FormData();
 
@@ -124,7 +124,7 @@ export default function SignupPage() {
       for(let key in data){
         formData.append(key, data[key]);
       }
-      console.log(formData);
+      // console.log(formData);
       if(uploadedProfilePicture) {
         formData.append('profilePicture', uploadedProfilePicture);
       }
@@ -160,9 +160,9 @@ export default function SignupPage() {
 
     try {
 
-      console.log(data);
+      // console.log(data);
 
-      console.log(`step 1 working`);
+      // console.log(`step 1 working`);
 
       setFormData({
         email: data.email,
@@ -173,7 +173,7 @@ export default function SignupPage() {
         password: data.password,
   
       })
-      console.log(data);
+      // console.log(data);
   
       const checkData = {
         email: data.email,
@@ -182,7 +182,7 @@ export default function SignupPage() {
   
            checkUser(checkData, {
         onSuccess: (data) => {
-          console.log(data);
+          // console.log(data);
           
           if (data?.data?.success) {
   
@@ -233,7 +233,7 @@ export default function SignupPage() {
     try {
       // console.log(`data from step 2 ` ,data);
       
-      console.log('submit 2 Working');
+      // console.log('submit 2 Working');
   
       // setFormData({
       //   ...formData,
@@ -241,7 +241,7 @@ export default function SignupPage() {
       //   userName: data.userName,
       // });
       
-      console.log('data from step2 :' , data);
+      // console.log('data from step2 :' , data);
   
       registerUser({
        ...formData,
@@ -251,7 +251,7 @@ export default function SignupPage() {
          
         onSuccess : (data) => {
              
-          console.log(data); 
+          // console.log(data); 
           
           if(data?.data?.success){ 
   
@@ -336,7 +336,7 @@ export default function SignupPage() {
   const [selectedProfilePicture, setSelctedProfilePicture] = useState("");
 
   const handleClick = (image) => {
-    console.log("clicked image", image);
+    // console.log("clicked image", image);
 
     setValue("profilePicture", image);
 

@@ -22,13 +22,13 @@ const Layout = ({ loggedInUser }) => {
   }, [loggedInUser, location.pathname, navigate]); 
 
   return (
-    <div className={` ${loggedInUser ? "flex w-full" : ""}`}>
+    <div className={` ${loggedInUser ? "flex flex-col md:flex-row md:flex w-full " : ""}`}>
 
       {loggedInUser && 
-      <div className="xl:w-1/6 "> 
-        <Sidebar/>
+      <div className="md:w-1/12 xl:w-1/6"> 
+        <Sidebar />
       </div>} {/* Show Sidebar only when logged in */}
-      <div className={loggedInUser ? "w-full min-h-screen" : ""}>
+      <div className={loggedInUser ? "w-full min-h-screen md:w-11/12 xl:w-5/6" : ""}>
         <main>
           <Outlet /> {/* Renders nested routes */}
         </main>

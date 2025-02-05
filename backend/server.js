@@ -4,20 +4,9 @@ import { connectDB } from './db/db.js';
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 
-
-
-
 const app = express();
 
 dotenv.config();
-
-console.log(" env cloundinary server file",
-  process.env.CLOUDINARY_API_KEY ,
-  process.env.CLOUDINARY_CLOUD_NAME,
-  process.env.CLOUDINARY_API_SECRET,
-  process.env.FRONTEND_URL
-
-);
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL,

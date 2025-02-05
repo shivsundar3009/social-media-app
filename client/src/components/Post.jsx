@@ -11,11 +11,11 @@ import { formatDistanceToNow } from 'date-fns';
 // Function to fetch posts from the backend
 const fetchPosts = async (pageParam) => {
 
-  console.log("pageParam inside fetchposts ln 14" , pageParam);
+  // console.log("pageParam inside fetchposts ln 14" , pageParam);
   const response = await axios.get(
     `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/getAllPosts?page=${pageParam}`
   );
-  console.log(" response Inside fetchProducts ln 18",response.data);
+  // console.log(" response Inside fetchProducts ln 18",response.data);
 
   return response.data;
 };
@@ -149,16 +149,16 @@ const InstagramFeed = () => {
     queryKey: ['posts'],
     queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam), 
     getNextPageParam: (lastPage , allPages) => {
-      console.log("lastPage", lastPage);
-      console.log("allPages", allPages);
+      // console.log("lastPage", lastPage);
+      // console.log("allPages", allPages);
       return lastPage.nextPage ? lastPage.nextPage : null;
     }, // Auto-fetch next page
   });
  
-  console.log('130 hsanectPAGE',hasNextPage);
+  // console.log('130 hsanectPAGE',hasNextPage);
   // console.log(hasPreviousPage);
   // console.log("data returned from infinite",data);
-  console.log("result gett",result);
+  // console.log("result gett",result);
 
   // const [loading, setLoading] = useState(false);
 
@@ -200,21 +200,21 @@ const InstagramFeed = () => {
       )}
 
       {/* Load More Button */}
-      {/* {hasNextPage && !isFetchingNextPage && (
+      {hasNextPage && !isFetchingNextPage && (
         <button
           onClick={handleLoadMore}
           className="w-full text-center py-3 bg-blue-500 text-white rounded-full mt-4"
         >
           {isLoading ? 'Loading...' : 'Load More'}
         </button>
-      )} */}
+      )}
 
       {/* Loading More Indicator */}
-      {/* {isFetchingNextPage && (
+      {isFetchingNextPage && (
         <div className="text-center my-4">
           <p>Loading more posts...</p>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

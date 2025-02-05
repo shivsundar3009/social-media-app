@@ -72,7 +72,7 @@ export default function Login() {
 
 
         if(data?.data?.success) {
-          console.log(`login success after dat`,data);
+          // console.log(`login success after dat`,data);
 
          dispatch(login(data?.data?.userData)) 
 
