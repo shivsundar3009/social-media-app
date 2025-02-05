@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate , useLocati
 import { LoginPage, Sidebar, Footer, SignupPage, Homescreen, Settings , NotFound , CreatePost } from "./components";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, loggedInUser }) => {
@@ -40,6 +41,20 @@ const Layout = ({ loggedInUser }) => {
 
 function App() {
   const loggedInUser = useSelector((state) => state.User.loggedInUser);
+
+  useEffect(() => {
+    const checkHeartbeat = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/heartbeat`);
+        console.log(response.data.message);
+      } catch (error) {
+        console.error('Error checking heartbeat:', error);
+      }
+    };
+
+    const interval = setInterval(checkHeartbeat, 2 * 60 * 1000); // 2 minutes
+    return () => clearInterval(interval);
+  }, []);
   
 
   return (
