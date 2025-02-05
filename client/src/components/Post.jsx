@@ -22,7 +22,7 @@ const fetchPosts = async (pageParam) => {
 
 // InstagramPost component that renders individual posts
 const InstagramPost = ({ post }) => {
-  console.log('instapraPOST INSIDE 25',post);
+  // console.log('instapraPOST INSIDE 25',post);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const timeAgo = formatDistanceToNow(new Date(post.createdAt))

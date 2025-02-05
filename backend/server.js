@@ -39,6 +39,10 @@ app.use('/api/v1/post' , postRoutes)
 import messagingRoutes from './routes/messaging.routes.js';
 app.use('/api/v1/messaging', messagingRoutes);
 
+app.get('/api/heartbeat', (req, res) => {
+  res.status(200).json({ message: "App is active" });
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
