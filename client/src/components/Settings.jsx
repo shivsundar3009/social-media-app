@@ -39,7 +39,7 @@ const Settings = () => {
 
   const handleLogout = () => {
     // Add logout logic here
-    console.log("Logging out...");
+    // console.log("Logging out...");
   dispatch(logout())
     navigate("/"); // Redirect to login page
 

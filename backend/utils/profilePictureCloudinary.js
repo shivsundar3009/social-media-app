@@ -5,7 +5,7 @@ import fs from 'fs';
 const uploadImage = async (file , folder) => {
     try {
 
-        console.log('file from cloudinary upload:' , file);
+        // console.log('file from cloudinary upload:' , file);
         // Upload the image to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
 
@@ -13,7 +13,7 @@ const uploadImage = async (file , folder) => {
             use_filename: true, // Use the original filename
         });
 
-        console.log('cloudyResult' , result);
+        // console.log('cloudyResult' , result);
 
         // Check if the upload was successful and then delete the file from the local system
         if (result && result.secure_url) {
