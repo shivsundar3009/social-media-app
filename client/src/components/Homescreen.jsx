@@ -17,7 +17,7 @@ export default function Homescreen() {
         </main>
 
         {/* Right Sidebar */}
-        <aside className="hidden lg:block lg:w-64 bg-blue-500 dark:bg-gray-800 shadow-md p-4 h-96">
+        <aside className="hidden 2xl:block 2xl:w-52  dark:bg-gray-800 shadow-md p-4 h-96">
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">
             Suggestions
           </h3>

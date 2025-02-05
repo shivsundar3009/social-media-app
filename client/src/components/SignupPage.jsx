@@ -124,7 +124,7 @@ export default function SignupPage() {
       for(let key in data){
         formData.append(key, data[key]);
       }
-      
+      console.log(formData);
       if(uploadedProfilePicture) {
         formData.append('profilePicture', uploadedProfilePicture);
       }
@@ -245,7 +245,7 @@ export default function SignupPage() {
   
       registerUser({
        ...formData,
-        // profilePicture: data.profilePicture,
+        profilePicture: data.profilePicture,
         userName: data.userName,
       }, {
          

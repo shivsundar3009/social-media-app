@@ -75,7 +75,7 @@ export const checkIfUserExists = async (req , res) => {
 
 export const createUser = async (req , res) => {
     try {
-        const {fullName , userName , email , phoneNumber , age , gender , password} = req.body;
+        const {fullName , userName , email , phoneNumber , age , gender , password , profilePicture} = req.body;
 
         // console.log('data recieved in backend :' ,req.file , userName) ;
 
@@ -87,6 +87,8 @@ export const createUser = async (req , res) => {
             const cloudinaryResponse = await uploadImage(req.file , folder);
             profileImageUrl = cloudinaryResponse.secure_url; // Get the URL of the uploaded image
             console.log(profileImageUrl);
+        } else {
+            profileImageUrl = profilePicture
         }
 
         // console.log(profilePicture);
@@ -183,3 +185,103 @@ export const deleteUser = async (req , res) => {
         
     };
 };
+
+export const followUser = async (req , res) => {
+
+    try {
+ 
+        console.log(req);
+
+        const { toBeFollowedUserId } = req.params;
+
+        console.log(toBeFollowedUserId);
+
+        const { _id : loggedInUserId} = req.loggedInUser ;
+
+        console.log(loggedInUserId);
+
+        let loggedInUserData
+
+        let toBeFollowedUserData
+
+        if(toBeFollowedUserId) {
+            toBeFollowedUserData   = await User.findById({ _id : toBeFollowedUserId} ).select('followers following') 
+        };
+        
+        if( loggedInUserId) {
+                loggedInUserData = await User.findById({ _id : loggedInUserId} ).select('followers following') 
+        };
+
+         if( loggedInUserData?.following?.includes(toBeFollowedUserId)){
+
+            console.log("inside LOOP" , loggedInUserData.following);
+
+            console.log(" you are already following")
+
+         } else {
+
+            loggedInUserData.following.push(toBeFollowedUserId);
+
+            toBeFollowedUserData.followers.push(loggedInUserId);
+
+            Promise.all([await loggedInUserData.save() , await toBeFollowedUserData.save()])
+
+            console.log("you are not following");
+  
+         };
+    
+        // console.log("loggedInUserData" , loggedInUserData);
+        
+        // console.log("toBeFollowedUserData" , toBeFollowedUserData);
+
+        res.status(200).json({ message : "user Followed successfully" , success : true});
+        
+    } catch (error) {
+
+        res.status(500).json({message: "error in following user", error: error.message , success: false});
+        
+    }
+    
+}
+
+export const unFollowUser = async (req , res) => {
+
+    try {
+
+        console.log(req);
+
+        const { toBeUnFollowedUserId } = req.params;
+
+        console.log(toBeUnFollowedUserId);
+
+        const { _id : loggedInUserId} = req.loggedInUser ;
+
+        console.log(loggedInUserId);
+
+        let loggedInUserData
+
+        let toBeUnFollowedUserData
+
+        if(toBeUnFollowedUserId) {
+            toBeUnFollowedUserData   = await User.findById({ _id : toBeUnFollowedUserId} ).select('followers following') 
+        };
+        
+        if( loggedInUserId) {
+                loggedInUserData = await User.findById({ _id : loggedInUserId} ).select('followers following') 
+        };
+         
+        if(loggedInUserData?.following?.includes(toBeUnFollowedUserId)){
+            console.log("following");
+        } else {
+            console.log("not following");
+        }
+
+        res.status(200).json({data : 'working unfollow' , success : true});
+        
+    } catch (error) {
+
+        res.status(500).json({message: "error in unfollowing user", error: error.message });
+        
+    }
+
+}

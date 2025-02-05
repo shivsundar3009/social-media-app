@@ -65,7 +65,7 @@ const InstagramPost = ({ post }) => {
 
       {/* Post Images / Carousel */}
       <div className="relative">
-        <Swiper navigation modules={[Navigation]} className="w-full rounded-lg overflow-hidden">
+        <Swiper navigation modules={[Navigation]} className="w-96 rounded-lg overflow-hidden">
           {post.media.map((mediaItem, index) => (
             <SwiperSlide key={index}>
               {mediaItem.mediaType === 'image' ? (
@@ -81,6 +81,9 @@ const InstagramPost = ({ post }) => {
           ))}
         </Swiper>
       </div>
+
+
+
 
       {/* Post Actions */}
       <div className="p-4">
@@ -197,21 +200,21 @@ const InstagramFeed = () => {
       )}
 
       {/* Load More Button */}
-      {hasNextPage && !isFetchingNextPage && (
+      {/* {hasNextPage && !isFetchingNextPage && (
         <button
           onClick={handleLoadMore}
           className="w-full text-center py-3 bg-blue-500 text-white rounded-full mt-4"
         >
           {isLoading ? 'Loading...' : 'Load More'}
         </button>
-      )}
+      )} */}
 
       {/* Loading More Indicator */}
-      {isFetchingNextPage && (
+      {/* {isFetchingNextPage && (
         <div className="text-center my-4">
           <p>Loading more posts...</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
