@@ -212,11 +212,18 @@ export const followUser = async (req , res) => {
                 loggedInUserData = await User.findById({ _id : loggedInUserId} ).select('followers following') 
         };
 
+        console.log("loggedInUserData",loggedInUserData);
+
+        console.log("toBeFollowedUserData",toBeFollowedUserData);
+
+
          if( loggedInUserData?.following?.includes(toBeFollowedUserId)){
 
             console.log("inside LOOP" , loggedInUserData.following);
 
             console.log(" you are already following")
+
+            return res.status(200).json({message : 'following' , success : false})
 
          } else {
 
@@ -224,7 +231,7 @@ export const followUser = async (req , res) => {
 
             toBeFollowedUserData.followers.push(loggedInUserId);
 
-            Promise.all([await loggedInUserData.save() , await toBeFollowedUserData.save()])
+            await Promise.all([loggedInUserData.save() , toBeFollowedUserData.save()])
 
             console.log("you are not following");
   
@@ -270,13 +277,21 @@ export const unFollowUser = async (req , res) => {
                 loggedInUserData = await User.findById({ _id : loggedInUserId} ).select('followers following') 
         };
          
+        console.log("check check" , loggedInUserData.following.filter(following => following != toBeUnFollowedUserId));
         if(loggedInUserData?.following?.includes(toBeUnFollowedUserId)){
             console.log("following");
+
+            loggedInUserData.following = loggedInUserData.following.filter(following => following != toBeUnFollowedUserId);
+
+           toBeUnFollowedUserData.followers = toBeUnFollowedUserData.followers.filter(follower => follower != loggedInUserId);
+
+           await Promise.all([loggedInUserData.save() ,toBeUnFollowedUserData.save()])
+            // res.status(200).json({message: 'following' , success: false})
         } else {
             console.log("not following");
         }
 
-        res.status(200).json({data : 'working unfollow' , success : true});
+        res.status(200).json({message : "unfollowed successfully", success : true});
         
     } catch (error) {
 
@@ -285,3 +300,7 @@ export const unFollowUser = async (req , res) => {
     }
 
 }
+
+// getMutualFollowers
+
+

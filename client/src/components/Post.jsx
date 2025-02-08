@@ -72,7 +72,7 @@ const InstagramPost = ({ post }) => {
                 <img
                   src={mediaItem.url}
                   alt={`Post media ${index + 1}`}
-                  className="w-full h-[450px] object-contain"
+                  className="w-[400px] object-contain"
                 />
               ) : (
                 <video src={mediaItem.url} className="w-full h-[450px] object-contain" controls />

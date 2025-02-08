@@ -5,17 +5,17 @@ export const authenticateUser = (req, res, next) => {
         const { token } = req.cookies;
 
 
-        const decoded = jwt.verify(token , process.env.JWT_SECRET_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
         // console.log("decoded user :" ,decoded);
 
         req.loggedInUser = decoded;
 
         next();
-        
+
     } catch (error) {
 
-         res.status(401).json({message : "unauthorized access" , error})
-        
+        res.status(401).json({ message: "unauthorized access", error })
+
     }
 }
