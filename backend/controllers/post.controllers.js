@@ -1,5 +1,6 @@
 import {Post } from "../models/post.model.js";
 import { uploadToCloudinary } from "../utils/postsCloudinary.js";
+import User from "../models/user.model.js";
 
 // Get all posts
 
@@ -48,9 +49,17 @@ export const createPost = async (req , res) => {
 
     try {
 
+       // we can also get the user from req.loggedInUser
+
         const { owner , userName ,  caption } = req.body;
+        
+        let ownerData
+
+        if(owner){
+          ownerData = await User.findById(owner) ;
+        }
  
-         const media = req.files;
+        const media = req.files;
          
         const folder = `social-media/users/${userName}/posts`
 
@@ -66,10 +75,16 @@ export const createPost = async (req , res) => {
 
          const newPost = new Post({owner , caption , media : mediaArray });
          await newPost.save();
-         res.status(201).json({message: "post created successfully", success : true , post : newPost});
+
+         ownerData.posts.push(newPost);
+         await ownerData.save();
+
+         res.status(201).json({message: "post created successfully", success : true});
         
         
     } catch (error) {
+
+      console.log(error)
 
         res.status(500).json({ message: "Error in creating post", success : false , error });
         

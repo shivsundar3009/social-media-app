@@ -12,8 +12,12 @@ import {
     Instagram
 } from "lucide-react";
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function Sidebar() {
+
+  const loggedInUser = useSelector((state) => state.User.loggedInUser);
+
   return (
     <aside className="md:h-screen md:w-1/12 md:fixed w-full xl:w-1/6  md:block dark:bg-gray-800 shadow-md ">
       <ul className=" flex w-full md:flex-col md:h-screen md:justify-around justify-around items-center h-11 xl:items-start ">
@@ -67,7 +71,7 @@ function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link to="/profile" className="xl:ml-10  flex items-center lg:p-2 md:justify-center  text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+          <Link to={`/userProfile/${loggedInUser._id}`} className="xl:ml-10  flex items-center lg:p-2 md:justify-center  text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
             <User className="mr-2 md:block" size={20} />
             <span className="hidden xl:block">Profile</span>
           </Link>

@@ -1,34 +1,37 @@
-import cloudinary from "./cloudinaryConfig.js";
-import fs from "fs/promises"; // For deleting local files after upload
-
 export const uploadToCloudinary = async (files, folder) => {
   try {
     if (!files || files.length === 0) {
       throw new Error("No files provided for upload");
     }
 
-    // Upload each file and get the URL & mediaType
     const mediaArray = await Promise.all(
       files.map(async (file) => {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder, // Upload to custom folder
-          resource_type: "auto", // Auto-detect (image/video)
-        });
+        try {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder,
+            resource_type: "auto",
+          });
 
-        // Delete the local file after upload
-        await fs.unlink(file.path);
-
-        // Extract media type from Cloudinary response
-        const mediaType = result.resource_type === "image" ? "image" : "video";
-
-        return {
-          url: result.secure_url, // Cloudinary URL
-          mediaType, // image or video
-        };
+          return {
+            url: result.secure_url,
+            mediaType: result.resource_type === "image" ? "image" : "video",
+          };
+        } catch (uploadError) {
+          console.error("Cloudinary upload failed for", file.path, uploadError.message);
+          throw new Error(`Cloudinary upload failed: ${uploadError.message}`);
+        } finally {
+          // Ensure the local file is always deleted
+          try {
+            await fs.unlink(file.path);
+            console.log("Deleted local file:", file.path);
+          } catch (unlinkError) {
+            console.error("Error deleting local file:", file.path, unlinkError.message);
+          }
+        }
       })
     );
 
-    return mediaArray; // Return final array
+    return mediaArray;
   } catch (error) {
     console.error("Error uploading files to Cloudinary:", error.message);
     throw new Error("Cloudinary upload failed: " + error.message);

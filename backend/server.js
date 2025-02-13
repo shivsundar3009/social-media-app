@@ -13,6 +13,8 @@ const corsOptions = {
   credentials: true
 }
 
+// check check working
+
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
