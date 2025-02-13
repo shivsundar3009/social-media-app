@@ -1,110 +1,175 @@
-import React, { useState } from 'react';
-import { Grid, Camera, Settings, Bookmark, Layout } from 'lucide-react';
+import React, { useState } from "react";
+import { Grid, Bookmark, Settings, Link2 , Instagram } from "lucide-react";
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+const fetchUserData = async (userId) => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getUserById/${userId}`);
+    
+    // return response.json();
+
+    console.log("data inside fetch data",res?.data?.user);
+
+    return res?.data?.user
+
+  } catch (error) {
+
+    console.log(`error in getting USER DATA` , error);
+
+    return null;
+  }
+};
 
 const UserProfile = () => {
-  const [activeTab, setActiveTab] = useState('posts');
+  const { userId } = useParams();
 
-  const profileData = {
-    username: "johndoe",
-    fullName: "John Doe",
-    posts: 342,
-    followers: 15300,
-    following: 891,
-    bio: "📸 Photography enthusiast\n🌎 Travel lover\n🎨 Digital creator",
-    profileImage: "/api/placeholder/150/150"
-  };
+  console.log('userID from USERprofile',userId);
 
-  const posts = Array(9).fill(null).map((_, index) => ({
-    id: index,
-    image: `/api/placeholder/300/300`
-  }));
+  const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  const [activeTab, setActiveTab] = useState("posts");
 
-  const formatNumber = (num) => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num;
-  };
+  const { data: userData, error, isLoading } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetchUserData(userId),
+    enabled: userId !== loggedInUser?._id, // Skip fetching if it's the logged-in user
+  });
+
+  const currentUser = userId === loggedInUser?._id ? loggedInUser : userData;
+
+  if (isLoading) {
+    return (
+      <div className="mt-10 min-h-screen flex flex-col items-center justify-center">
+        <Instagram className="w-12 h-12 text-gray-500 animate-spin" />
+        <p className="mt-2 text-lg text-gray-600">Loading user data...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="mt-10 min-h-screen flex flex-col items-center justify-center">
+        <Instagram className="w-12 h-12 text-red-500" />
+        <p className="mt-2 text-2xl text-red-500">Error loading user data</p>
+      </div>
+    );
+  }
+  
+  if (!currentUser) {
+    return (
+      <div className="mt-10 min-h-screen flex flex-col items-center justify-center">
+        <Instagram className="w-12 h-12 text-gray-500" />
+        <p className="mt-2 text-2xl text-gray-600">User not found</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white">
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
       {/* Profile Header */}
-      <div className="flex items-center p-4 border-b">
-        <div className="flex-shrink-0">
+      <div className="flex items-center gap-6 mb-6">
+        <div className="w-24 h-24 md:w-40 md:h-40">
           <img
-            src={profileData.profileImage}
-            alt={profileData.username}
-            className="w-20 h-20 rounded-full border"
+            src={currentUser.profilePicture || "/default-profile.png"}
+            alt={currentUser.userName}
+            className="w-full h-full rounded-full object-cover border border-gray-200"
           />
         </div>
-        
-        <div className="ml-8">
-          <div className="flex items-center space-x-4">
-            <h2 className="text-xl font-semibold">{profileData.username}</h2>
-            <button className="px-4 py-1 bg-gray-100 rounded-md text-sm font-semibold">
-              Edit Profile
-            </button>
-            <Settings className="w-6 h-6 text-gray-600" />
+
+        {/* Profile Info */}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 mb-4">
+            <h1 className="text-lg font-semibold">{currentUser.userName}</h1>
+            {loggedInUser && loggedInUser._id !== currentUser._id && (
+              <div className="flex gap-2">
+                <button className="bg-blue-500 text-white px-4 md:px-6 py-1.5 rounded-lg font-semibold text-sm">
+                  Follow
+                </button>
+                <button className="bg-gray-100 px-4 md:px-6 py-1.5 rounded-lg font-semibold text-sm">
+                  Message
+                </button>
+              </div>
+            )}
+            {loggedInUser && loggedInUser._id === currentUser._id && (
+              <Link to="/settings" className="bg-gray-100 p-2 rounded-lg">
+                <Settings size={16} />
+              </Link>
+            )}
           </div>
-          
-          <div className="flex space-x-8 my-4">
-            <span><strong>{profileData.posts}</strong> posts</span>
-            <span><strong>{formatNumber(profileData.followers)}</strong> followers</span>
-            <span><strong>{formatNumber(profileData.following)}</strong> following</span>
+
+          {/* Stats */}
+          <div className="flex gap-6 mb-4">
+            <div>
+              <span className="font-semibold">{currentUser.posts?.length || 0}</span> posts
+            </div>
+            <div>
+              <span className="font-semibold">{currentUser.followers?.length || 0}</span> followers
+            </div>
+            <div>
+              <span className="font-semibold">{currentUser.following?.length || 0}</span> following
+            </div>
           </div>
-          
-          <div>
-            <h1 className="font-semibold">{profileData.fullName}</h1>
-            <p className="whitespace-pre-line text-sm">{profileData.bio}</p>
+
+          {/* Bio */}
+          <div className="text-sm">
+            <div className="font-semibold mb-1">{currentUser.fullName}</div>
+            <div className="whitespace-pre-line">{currentUser.bio || "No bio available"}</div>
+            {currentUser.website && (
+              <a
+                href={`https://${currentUser.website}`}
+                className="text-blue-900 font-semibold flex items-center gap-1 mt-1"
+              >
+                <Link2 size={14} /> {currentUser.website}
+              </a>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex justify-around border-t">
+      {/* Tabs Section */}
+      <div className="flex justify-center border-b border-gray-200 mb-4">
         <button
-          className={`flex items-center px-4 py-2 border-t-2 ${
-            activeTab === 'posts' ? 'border-black' : 'border-transparent'
+          className={`flex items-center gap-1 py-2 px-6 text-sm font-semibold ${
+            activeTab === "posts" ? "border-b-2 border-black" : "text-gray-500"
           }`}
-          onClick={() => setActiveTab('posts')}
+          onClick={() => setActiveTab("posts")}
         >
-          <Grid className="w-4 h-4 mr-1" />
-          POSTS
+          <Grid size={16} /> Posts
         </button>
         <button
-          className={`flex items-center px-4 py-2 border-t-2 ${
-            activeTab === 'saved' ? 'border-black' : 'border-transparent'
+          className={`flex items-center gap-1 py-2 px-6 text-sm font-semibold ${
+            activeTab === "saved" ? "border-b-2 border-black" : "text-gray-500"
           }`}
-          onClick={() => setActiveTab('saved')}
+          onClick={() => setActiveTab("saved")}
         >
-          <Bookmark className="w-4 h-4 mr-1" />
-          SAVED
-        </button>
-        <button
-          className={`flex items-center px-4 py-2 border-t-2 ${
-            activeTab === 'tagged' ? 'border-black' : 'border-transparent'
-          }`}
-          onClick={() => setActiveTab('tagged')}
-        >
-          <Layout className="w-4 h-4 mr-1" />
-          TAGGED
+          <Bookmark size={16} /> Saved
         </button>
       </div>
 
-      {/* Photo Grid */}
-      <div className="grid grid-cols-3 gap-1">
-        {posts.map((post) => (
-          <div key={post.id} className="relative aspect-square">
-            <img
-              src={post.image}
-              alt={`Post ${post.id}`}
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 hover:bg-black hover:bg-opacity-20 transition-all duration-200" />
+      {/* User Posts / Saved Posts */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-1 mt-4 min-h-96">
+        {(activeTab === "posts" ? currentUser.posts : currentUser.savedPosts || [])?.length > 0 ? (
+          (activeTab === "posts" ? currentUser.posts : currentUser.savedPosts).map((post, postIndex) =>
+            post.media.map((med, mediaIndex) => (
+              <div key={`${postIndex}-${mediaIndex}`} className="relative aspect-square group">
+                {med.mediaType === "image" ? (
+                  <img src={med.url} alt="Post" className="w-full h-full object-cover" />
+                ) : med.mediaType === "video" ? (
+                  <video controls className="w-full h-full object-cover">
+                    <source src={med.url} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : null}
+              </div>
+            ))
+          )
+        ) : (
+          <div className="text-gray-500 text-lg col-span-2 md:col-span-3 text-center">
+            {activeTab === "posts" ? "No posts available" : "No saved posts"}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

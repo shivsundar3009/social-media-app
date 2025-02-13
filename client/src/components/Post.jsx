@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal , Instagram } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
+import {Link} from "react-router-dom"
 
 // Function to fetch posts from the backend
 const fetchPosts = async (pageParam) => {
@@ -55,7 +56,7 @@ const InstagramPost = ({ post }) => {
               />
             </div>
           </div>
-          <span className="font-semibold text-sm">{post.owner.userName}</span>
+          <Link to={`/userProfile/${post.owner._id}`} className="font-semibold text-sm underline">{post.owner.userName}</Link>
           <span className="text-xs text-gray-400 ml-2">{timeAgo}</span>
         </div>
         <button className="text-gray-600">
@@ -173,18 +174,36 @@ const InstagramFeed = () => {
     }
   };
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="min-h-screen flex justify-center items-center">
+  //       <p>Loading posts... ISLOADING</p>
+  //     </div>
+  //   );
+  // }
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p>Loading posts...</p>
+      <div className="mt-10 min-h-screen flex flex-col items-center justify-center">
+        <Instagram className="w-12 h-12 text-gray-500 animate-spin" />
+        <p className="mt-2 text-lg text-gray-600">Loading Posts...</p>
       </div>
     );
   }
 
+  // if (isError) {
+  //   return (
+  //     <div className="min-h-screen flex justify-center items-center">
+  //       <p>Failed to fetch posts. Please try again later.</p>
+  //     </div>
+  //   );
+  // }
+
   if (isError) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p>Failed to fetch posts. Please try again later.</p>
+      <div className="mt-10 min-h-screen flex flex-col items-center justify-center">
+        <Instagram className="w-12 h-12 text-red-500" />
+        <p className="mt-2 text-2xl text-red-500">Error loading posts</p>
       </div>
     );
   }

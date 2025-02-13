@@ -15,7 +15,7 @@ export const userLogin = async (req, res) => {
             { email: { $eq: identifier } },    // Ensure exact match
             { phoneNumber: { $eq: identifier } } // Ensure exact match
           ]
-        });
+        }).populate("posts");
 
         console.log(user);
 
