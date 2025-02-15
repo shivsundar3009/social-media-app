@@ -52,13 +52,19 @@ export const createPost = async (req , res) => {
        // we can also get the user from req.loggedInUser
 
         const { owner , userName ,  caption } = req.body;
+
+        console.log('ownerID' , owner);
         
         let ownerData
 
         if(owner){
           ownerData = await User.findById(owner) ;
         }
- 
+        if(!ownerData){
+          return res.status(404).json({ message: "User not found", success : false });
+        };
+        console.log('owner' , ownerData);
+
         const media = req.files;
          
         const folder = `social-media/users/${userName}/posts`
@@ -89,6 +95,162 @@ export const createPost = async (req , res) => {
         res.status(500).json({ message: "Error in creating post", success : false , error });
         
     }
+
+};
+
+export const bookMarkPost = async (req , res) => {
+
+  try {
+
+    console.log('bookmarkPost req.loggedInUser', req.loggedInUser);
+
+    const {_id : loggedInUserId } = req.loggedInUser;
+
+    const loggedInUserData = await User.findById(loggedInUserId);
+    
+    if(!loggedInUserData) {
+      return res.status(404).json({ message: "User not found", success : false });
+    }
+    
+    const { postId } = req.params;
+
+    if(!postId ){
+      return res.status(400).json({ message: "postId is required", success : false });
+    };
+
+    loggedInUserData.savedPosts.push(postId);
+
+    await loggedInUserData.save();
+
+
+    console.log('inside bookMARKPOST' , loggedInUserId);
+
+
+
+    res.status(200).json({message: "Post created successfully", success : true , loggedInUserData});
+    
+  } catch (error) {
+    
+    res.status(500).json({message : "error in bookMarkPost" , success : false , error })
+  }
+
+};
+
+export const unBookMarkPost = async (req , res) => {
+
+  try {
+
+    console.log('bookmarkPost req.loggedInUser', req.loggedInUser);
+
+    const {_id : loggedInUserId } = req.loggedInUser;
+
+    const loggedInUserData = await User.findById(loggedInUserId);
+    
+    if(!loggedInUserData) {
+      return res.status(404).json({ message: "User not found", success : false });
+    }
+    
+    const { postId } = req.params;
+
+    if(!postId ){
+      return res.status(400).json({ message: "postId is required", success : false });
+    };
+
+    if( !loggedInUserData.savedPosts.includes(postId) ){
+      return res.status(400).json({ message: "Post not found in saved posts", success : false });
+    };
+
+    loggedInUserData.savedPosts.remove(postId);
+
+    await loggedInUserData.save();
+
+
+    console.log('inside bookMARKPOST' , loggedInUserId);
+
+
+
+    res.status(200).json({message: "Post unBookMarked successfully", success : true , loggedInUserData});
+    
+  } catch (error) {
+    
+    res.status(500).json({message : "error in unBookMarkPost" , success : false , error })
+  }
+
+};
+
+export const likePost = async (req , res) => {
+
+  try {
+
+    console.log('likePost req.loggedInUser', req.loggedInUser);
+
+    const {_id : loggedInUserId } = req.loggedInUser;
+
+    const { postId } = req.params;
+
+    if(!postId ){
+      return res.status(400).json({ message: "postId is required", success : false });
+    };
+
+    const post = await Post.findById(postId);
+
+    if(!post) {
+      return res.status(404).json({ message: "Post not found", success : false });
+    }
+
+    if( post.likedBy.includes(loggedInUserId) ){
+      return res.status(400).json({ message: "You have already liked this post", success : false });
+    }
+
+    post.likedBy.push(loggedInUserId);
+
+    await post.save();
+
+    res.status(200).json({message : "post liked  ssuccessfulyy" , success : true , post})
+    
+  } catch (error) {
+    
+    res.status(500).json({message : "error in likePost" , success : false , error })
+    
+  }
+
+};
+
+export const unLikePost = async (req , res) => {
+
+  try {
+
+    console.log('likePost req.loggedInUser', req.loggedInUser);
+
+    const {_id : loggedInUserId } = req.loggedInUser;
+
+    const { postId } = req.params;
+
+    if(!postId ){
+      return res.status(400).json({ message: "postId is required", success : false });
+    };
+
+    const post = await Post.findById(postId);
+
+    if(!post) {
+      return res.status(404).json({ message: "Post not found", success : false });
+    }
+
+    if( !post.likedBy.includes(loggedInUserId) ){
+      return res.status(400).json({ message: "You have not liked this post", success : false });
+    }
+
+    post.likedBy.remove(loggedInUserId);
+
+    await post.save();
+
+    res.status(200).json({message : "post unLiked  ssuccessfulyy" , success : true , post})
+    
+  } catch (error) {
+    
+    res.status(500).json({message : "error in likePost" , success : false , error })
+    
+  }
 
 };
 

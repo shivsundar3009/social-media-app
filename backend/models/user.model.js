@@ -66,6 +66,11 @@ const UserSchema = new mongoose.Schema({
       ref: "Post",
       default: []  // Empty array as default
     },
+    savedPosts: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Post",
+      default: []  // Empty array as default
+    },
     
     followers: {
       type: [mongoose.Schema.Types.ObjectId],

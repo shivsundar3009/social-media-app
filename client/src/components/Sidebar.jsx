@@ -53,7 +53,7 @@ function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link to="/messages" className="xl:ml-10  flex items-center lg:p-2 md:justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+          <Link to="/messagingScreen" className="xl:ml-10  flex items-center lg:p-2 md:justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
             <MessageCircle className="mr-2 md:block" size={20} />
             <span className="hidden xl:block">Messages</span>
           </Link>
