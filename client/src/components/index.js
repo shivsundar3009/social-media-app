@@ -8,6 +8,7 @@ import Settings from "./Settings";
 import UserProfile from "./UserProfile";
 import NotFound from "./NotFound";
 import CreatePost from "./CreatePost";
+import MessagingScreen from "./MessagingScreen";
 
 
-export {Navbar , Footer, LoginPage, SignupPage , Homescreen , UserProfile , Sidebar , Settings , NotFound , CreatePost};
+export {Navbar , Footer, LoginPage, SignupPage , Homescreen , UserProfile , Sidebar , Settings , NotFound , CreatePost , MessagingScreen};

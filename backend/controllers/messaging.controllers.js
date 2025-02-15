@@ -39,6 +39,42 @@ export const getMutualFollowers = async (req , res , next) => {
 
  };
 
+ export const getConversationsWithMutualFollowers = async (req , res) => {
+
+    try {
+
+        const { _id : loggedInUserId } = req.loggedInUser ;
+
+        console.log("loggedInUserId",loggedInUserId);
+
+        if(!loggedInUserId){
+            return res.status(401).json({ message: "Unauthorized", success : false });
+        }
+
+        const mutualFollowers = req.mutualFollowers ;
+
+        if(mutualFollowers.length == 0){
+            return res.status(400).json({ message: "No mutual followers found", success : false });
+        };
+
+        console.log("mutualFollowers" , mutualFollowers);
+
+
+
+
+  
+         
+        res.status(200).json({message: "getConversationsWithMutualFollwers working properly" , success : true});
+
+        
+    } catch (error) {
+
+        res.status(500).json({message: "error in getting conversations with mutual followers", error: error.message });
+        
+    }
+
+ };
+
  export const sayHi = async ( req , res) => {
 
     try {

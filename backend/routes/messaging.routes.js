@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { getAllConversations, getMessages , getMutualFollowers , sayHi , sendMessage} from '../controllers/messaging.controllers.js';
+import { getAllConversations, getConversationsWithMutualFollowers, getMessages , getMutualFollowers , sayHi , sendMessage} from '../controllers/messaging.controllers.js';
 import { authenticateUser } from '../utils/authenticateUser.js';
 
 const router = express.Router();
@@ -10,6 +10,8 @@ const router = express.Router();
 router.post("/sayHi/:mutualFollowerId" , authenticateUser , getMutualFollowers , sayHi);
 
 router.post("/getAllConversations" , authenticateUser , getMutualFollowers , getAllConversations);
+
+router.post("/getConversationsWithMutualFollowers" , authenticateUser , getMutualFollowers , getConversationsWithMutualFollowers);
 
 router.post("/sendMessage/:receiversId" , authenticateUser , sendMessage);
 
