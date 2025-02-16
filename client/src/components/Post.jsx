@@ -184,17 +184,17 @@ const InstagramPost = ({ post }) => {
 
       {/* Post Images / Carousel */}
       <div className="relative">
-        <Swiper navigation modules={[Navigation]} className="w-52 sm:w-96 rounded-lg overflow-hidden">
+        <Swiper navigation modules={[Navigation]} className="w-80 sm:w-full sm: overflow-hidden">
           {post?.media?.map((mediaItem, index) => (
             <SwiperSlide key={index}>
               {mediaItem?.mediaType === 'image' ? (
                 <img
                   src={mediaItem?.url}
                   alt={`Post media ${index + 1}`}
-                  className="w-52 h-52 sm:h-96 sm:w-96 border rounded-2xl object-contain"
+                  className=" h-52 sm:h-[400px] w-full  object-cover"
                 />
               ) : (
-                <video src={mediaItem?.url} className="w-full object-contain" controls />
+                <video src={mediaItem?.url} className="w-full sm:h-[400px] object-contain" controls />
               )}
             </SwiperSlide>
           ))}
