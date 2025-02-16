@@ -68,20 +68,24 @@ export default function Login() {
     loginUser( data , {
 
       onSuccess: (data) => {
+    
+         if(data) try {
 
+          if(data?.data?.success) {
+            // console.log(`login success after dat`,data);
+  
+           dispatch(login(data?.data?.userData)) 
+  
+            toast.success('Login successful!');
+  
+            navigate('/homescreen') // Redirect to a dashboard or homepage
+          }
+          
+         } catch (error) {
+          
+           toast.error('error in logging in user')
+         }
 
-
-        if(data?.data?.success) {
-          // console.log(`login success after dat`,data);
-
-         dispatch(login(data?.data?.userData)) 
-
-          toast.success('Login successful!');
-
-          navigate('/homescreen') // Redirect to a dashboard or homepage
-        } else {
-          toast.error('error in logging in user')
-        }
         // toast.success("Login successful!");
         // navigate('/dashbo'); // Redirect to a dashboard or homepage
       },
