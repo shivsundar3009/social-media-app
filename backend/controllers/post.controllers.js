@@ -127,7 +127,7 @@ export const bookMarkPost = async (req , res) => {
 
 
 
-    res.status(200).json({message: "Post created successfully", success : true , loggedInUserData});
+    res.status(200).json({message: "Post BookMarked successfully", success : true , loggedInUserData});
     
   } catch (error) {
     
@@ -206,7 +206,7 @@ export const likePost = async (req , res) => {
 
     await post.save();
 
-    res.status(200).json({message : "post liked  ssuccessfulyy" , success : true , post})
+    res.status(200).json({message : "post liked  successfully" , success : true , post})
     
   } catch (error) {
     
@@ -244,7 +244,7 @@ export const unLikePost = async (req , res) => {
 
     await post.save();
 
-    res.status(200).json({message : "post unLiked  ssuccessfulyy" , success : true , post})
+    res.status(200).json({message : "post unLiked  successfully" , success : true , post})
     
   } catch (error) {
     

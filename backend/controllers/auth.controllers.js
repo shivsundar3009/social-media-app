@@ -15,7 +15,7 @@ export const userLogin = async (req, res) => {
             { email: { $eq: identifier } },    // Ensure exact match
             { phoneNumber: { $eq: identifier } } // Ensure exact match
           ]
-        }).populate("posts");
+        }).populate("posts savedPosts");
 
         console.log(user);
 
@@ -60,4 +60,30 @@ export const userLogout = async (req,res) => {
         
     }
 
-}
+};
+
+export const updateOnRefresh = async (req,res) => {
+
+    try {
+        console.log("update on refresh working....0");
+
+        const {_id: loggedInUserId} = req.loggedInUser;
+
+        console.log("loggedInUserId in asyncTHUNK", loggedInUserId);
+
+        if(!loggedInUserId){
+            return res.status(401).json({ message: "Unauthorized Please Log In Again", success : false });  // Return unauthorized if no token is present in the request header
+        }
+
+       const user = await User.findById(loggedInUserId).select('-password').populate("posts savedPosts");
+
+        if (!user) return res.status(404).json({ message: "User not found" , success :false});
+
+    
+        res.status(200).json({message : "User updated successfully" , success : true , user});
+      } catch (error) {
+        console.log("error in updatte ON refresh" , error);
+        res.status(500).json({ message: "Invalid token"  , error: error.message , success:false });
+      }
+
+};

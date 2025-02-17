@@ -1,13 +1,52 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate , useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
+import {jwtDecode } from "jwt-decode";
 import { LoginPage, Sidebar, Footer, SignupPage, Homescreen, Settings , NotFound , CreatePost, UserProfile, MessagingScreen } from "./components";
-import { ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
+import { ToastContainer , toast} from "react-toastify";
+import { useSelector , useDispatch} from "react-redux";
+import { logout , fetchUser } from "./redux/features/userSlice";
 import axios from "axios";
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children, loggedInUser }) => {
-  return loggedInUser ? children : <Navigate to="/" />;
+  const dispatch = useDispatch();
+  const token = Cookies.get("token");
+
+  // If user is not logged in (Redux state check)
+  if (!loggedInUser) {
+    // toast.error("You must be logged in!");
+    // toast.error("You must be logged in!");
+    return <Navigate to="/" replace />;
+  }
+
+  // If token is missing, force logout
+  if (!token) {
+    toast.error("Session expired! Please log in again.");
+    dispatch(logoutUser()); // Reset Redux state
+    return <Navigate to="/" replace />;
+  }
+
+  // Check if token is expired
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Date.now() / 1000; // Convert to seconds
+
+    if (decodedToken.exp < currentTime) {
+      toast.error("Session expired! Please log in again.");
+      Cookies.remove("token"); // Remove expired token
+      dispatch(logout()); // Reset Redux state
+      return <Navigate to="/" replace />;
+    }
+  } catch (error) {
+    toast.error("Invalid session! Please log in again.");
+    Cookies.remove("token");
+    dispatch(logout());
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 // Layout Component
@@ -41,6 +80,12 @@ const Layout = ({ loggedInUser }) => {
 
 function App() {
   const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    dispatch(fetchUser()); // Fetch user on refresh
+  }, [dispatch]);
 
   useEffect(() => {
     const checkHeartbeat = async () => {

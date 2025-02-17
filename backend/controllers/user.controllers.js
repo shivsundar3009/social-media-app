@@ -27,7 +27,7 @@ export const getUserById = async (req , res) => {
 
         const {userId} = req.params;
         
-        const user = await User.findById(userId).select('-password0').populate("posts");
+        const user = await User.findById(userId).select('-password').populate("posts savedPosts");
 
         if(!user) {
             return res.status(404).json({message: "user not found"});
