@@ -13,17 +13,17 @@ import { date } from "zod";
 // Protected Route Component
 const ProtectedRoute = ({ children, loggedInUser }) => {
 
-  console.log("inside protected route");
+  // console.log("inside protected route");
   const dispatch = useDispatch();
   const token = Cookies.get("token");
 
-  console.log('decoded token1: ', token);
-    console.log("current time1: ", Date.now());
+  // console.log('decoded token1: ', token);
+    // console.log("current time1: ", Date.now());
 
   // If user is not logged in (Redux state check)
   if (!loggedInUser) {
 
-    console.log("noLoggedInuser Inside protected route");
+    // console.log("noLoggedInuser Inside protected route");
     // toast.error("You must be logged in!");
     // toast.error("You must be logged in!");
     return <Navigate to="/" replace />;
@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
   // If token is missing, force logout
   if (!token) {
 
-    console.log("no token Inside protected route");
+    // console.log("no token Inside protected route");
     toast.error("No Token! Please log in again.");
     dispatch(logout()); // Reset Redux state
     return <Navigate to="/" replace />;
@@ -43,10 +43,10 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000; // Convert to seconds
 
-    console.log('decoded token2: ', decodedToken);
-    console.log("current time2: ", currentTime);
+    // console.log('decoded token2: ', decodedToken);
+    // console.log("current time2: ", currentTime);
 
-    console.log("token expired or NOT" , decodedToken.exp < currentTime);
+    // console.log("token expired or NOT" , decodedToken.exp < currentTime);
 
     if (decodedToken.exp < currentTime) {
       console.log('tokenExpired INSIDE protected route');

@@ -37,7 +37,11 @@ export const userLogin = async (req, res) => {
 
         const { password : userPass , ...userData} = user.toObject();
         
-        res.status(200).cookie("token" ,jwtToken).json({message: "user successfullly logged In" , success : true , userData});
+        res.status(200).cookie("token" ,jwtToken , {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"  // for cross-browser compatibility in some cases
+        }).json({message: "user successfullly logged In" , success : true , userData});
 
         // res.status(200).json(user);
     } catch (error) {
