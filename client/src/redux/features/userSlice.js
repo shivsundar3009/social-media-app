@@ -14,7 +14,7 @@ export const fetchUser = createAsyncThunk("user/fetchUser", async (_, { rejectWi
       withCredentials: true, //
     });
 
-    console.log("response in async THUNK", response);
+    // console.log("response in async THUNK", response);
 
     return response?.data?.user; // Return fetched user
   } catch (error) {
