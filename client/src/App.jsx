@@ -13,11 +13,13 @@ import { date } from "zod";
 // Protected Route Component
 const ProtectedRoute = ({ children, loggedInUser }) => {
 
+  console.log('logged in user 1', loggedInUser);
+
   // console.log("inside protected route");
   const dispatch = useDispatch();
   const token = Cookies.get("token");
 
-  // console.log('decoded token1: ', token);
+  console.log('token from protectec ROUTe 2: ', token);
     // console.log("current time1: ", Date.now());
 
   // If user is not logged in (Redux state check)
@@ -32,7 +34,7 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
   // If token is missing, force logout
   if (!token) {
 
-    // console.log("no token Inside protected route");
+    console.log("no token Inside protected route 3");
     toast.error("No Token! Please log in again.");
     dispatch(logout()); // Reset Redux state
     return <Navigate to="/" replace />;
@@ -43,20 +45,20 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000; // Convert to seconds
 
-    // console.log('decoded token2: ', decodedToken);
+    console.log('decoded token 4: ', decodedToken);
     // console.log("current time2: ", currentTime);
 
     // console.log("token expired or NOT" , decodedToken.exp < currentTime);
 
     if (decodedToken.exp < currentTime) {
-      console.log('tokenExpired INSIDE protected route');
+      console.log('tokenExpired INSIDE protected routen 5');
       toast.error("Session expired! Please log in again.");
       Cookies.remove("token"); // Remove expired token
       dispatch(logout()); // Reset Redux state
       return <Navigate to="/" replace />;
     }
   } catch (error) {
-    console.log("error in jwtDecode inside protected route", error);
+    console.log("error in jwtDecode inside protected route 6", error);
     toast.error("Invalid session! Please log in again.");
     Cookies.remove("token");
     dispatch(logout());

@@ -8,13 +8,16 @@ import { toast } from "react-toastify";
 export const fetchUser = createAsyncThunk("user/fetchUser", async (_, { rejectWithValue }) => {
   try {
     const token = Cookies.get("token");
+
+    console.log('token INSIDE asyncTHunk', token);
+    
     if (!token) return rejectWithValue("No token found");
 
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/updateOnRefresh`, {
       withCredentials: true, //
     });
 
-    // console.log("response in async THUNK", response);
+    console.log("response in async THUNK", response);
 
     return response?.data?.user; // Return fetched user
   } catch (error) {
