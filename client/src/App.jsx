@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
   // If token is missing, force logout
   if (!token) {
     toast.error("Session expired! Please log in again.");
-    dispatch(logoutUser()); // Reset Redux state
+    dispatch(logout()); // Reset Redux state
     return <Navigate to="/" replace />;
   }
 
