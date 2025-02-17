@@ -7,6 +7,7 @@ import { ToastContainer , toast} from "react-toastify";
 import { useSelector , useDispatch} from "react-redux";
 import { logout , fetchUser } from "./redux/features/userSlice";
 import axios from "axios";
+import { date } from "zod";
 
 
 // Protected Route Component
@@ -15,6 +16,9 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
   console.log("inside protected route");
   const dispatch = useDispatch();
   const token = Cookies.get("token");
+
+  console.log('decoded token1: ', token);
+    console.log("current time1: ", Date.now());
 
   // If user is not logged in (Redux state check)
   if (!loggedInUser) {
@@ -39,8 +43,10 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000; // Convert to seconds
 
-    console.log('decoded token: ', decodedToken);
-    console.log("current time: ", currentTime);
+    console.log('decoded token2: ', decodedToken);
+    console.log("current time2: ", currentTime);
+
+    console.log("token expired or NOT" , decodedToken.exp < currentTime);
 
     if (decodedToken.exp < currentTime) {
       console.log('tokenExpired INSIDE protected route');
