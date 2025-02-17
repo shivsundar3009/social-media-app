@@ -23,7 +23,7 @@ export const fetchUser = createAsyncThunk("user/fetchUser", async (_, { rejectWi
 
      console.log("error in asyncTHUNNK" , error);
      toast.error(error?.response?.data?.error);
-    return rejectWithValue(error.response?.data || "Failed to fetch user");
+    return rejectWithValue(error?.response?.data || "Failed to fetch user");
   }
 });
 

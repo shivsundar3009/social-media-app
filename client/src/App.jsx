@@ -11,11 +11,15 @@ import axios from "axios";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, loggedInUser }) => {
+
+  console.log("inside protected route");
   const dispatch = useDispatch();
   const token = Cookies.get("token");
 
   // If user is not logged in (Redux state check)
   if (!loggedInUser) {
+
+    console.log("noLoggedInuser Inside protected route");
     // toast.error("You must be logged in!");
     // toast.error("You must be logged in!");
     return <Navigate to="/" replace />;
@@ -23,7 +27,9 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
 
   // If token is missing, force logout
   if (!token) {
-    toast.error("Session expired! Please log in again.");
+
+    console.log("no token Inside protected route");
+    toast.error("No Token! Please log in again.");
     dispatch(logout()); // Reset Redux state
     return <Navigate to="/" replace />;
   }
@@ -33,13 +39,18 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000; // Convert to seconds
 
+    console.log('decoded token: ', decodedToken);
+    console.log("current time: ", currentTime);
+
     if (decodedToken.exp < currentTime) {
+      console.log('tokenExpired INSIDE protected route');
       toast.error("Session expired! Please log in again.");
       Cookies.remove("token"); // Remove expired token
       dispatch(logout()); // Reset Redux state
       return <Navigate to="/" replace />;
     }
   } catch (error) {
+    console.log("error in jwtDecode inside protected route", error);
     toast.error("Invalid session! Please log in again.");
     Cookies.remove("token");
     dispatch(logout());
