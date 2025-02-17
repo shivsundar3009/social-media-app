@@ -17,7 +17,7 @@ export default function CreatePost() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  const loggedInUser = useSelector((state) => state?.User?.loggedInUser);
  
   const createPostFunc =  async (formData) => {
 
@@ -62,15 +62,15 @@ export default function CreatePost() {
 
   const handleCreatePost = (e) => {
     e.preventDefault();
-    if (mediaFiles.length === 0) {
+    if (mediaFiles?.length === 0) {
       toast.error('Please select at least one media file.');
       return;
     }
 
     const formData = new FormData();
     formData.append('caption', caption);
-    formData.append('owner', loggedInUser._id);
-    formData.append('userName', loggedInUser.userName);
+    formData.append('owner', loggedInUser?._id);
+    formData.append('userName', loggedInUser?.userName);
     mediaFiles.forEach(({ file }) => formData.append('media', file));
 
     createPost(formData , {
@@ -78,11 +78,11 @@ export default function CreatePost() {
 
         console.log("data in MUTATIO",data)
 
-        if(data.data.success){
+        if(data?.data?.success){
           toast.success('Post created successfully!');
-          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getUserById/${loggedInUser._id}`).then((data) => {
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getUserById/${loggedInUser?._id}`).then((data) => {
             
-            dispatch(login(data.data.user))
+            dispatch(login(data?.data?.user))
             
           } ).catch((error) => toast.error(error));
           navigate('/');
@@ -93,7 +93,7 @@ export default function CreatePost() {
         // navigate('/');
       },
       onError: (error) => {
-        toast.error('Error creating post: ' + error.message);
+        toast.error('Error creating post: ' + error?.message);
       },
     });
   };
@@ -140,23 +140,23 @@ export default function CreatePost() {
               Select Media
             </label>
           </div>
-          {mediaFiles.length > 0 && (
+          {mediaFiles?.length > 0 && (
             <Swiper
               navigation
               modules={[Navigation]}
               className="w-full rounded-lg overflow-hidden"
             >
-              {mediaFiles.map((media, index) => (
+              {mediaFiles?.map((media, index) => (
                 <SwiperSlide key={index} className="relative">
-                  {media.file.type.startsWith('image') ? (
+                  {media?.file?.type.startsWith('image') ? (
                     <img
-                      src={media.preview}
+                      src={media?.preview}
                       alt="Preview"
                       className="w-full h-96 object-contain rounded-lg"
                     />
                   ) : (
                     <video
-                      src={media.preview}
+                      src={media?.preview}
                       className="w-full h-96 object-contain rounded-lg"
                       controls
                     />
@@ -175,7 +175,7 @@ export default function CreatePost() {
           <button
             type="submit"
             className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white text-lg py-3 rounded-lg ${
-              mediaFiles.length === 0 || isLoading
+              mediaFiles?.length === 0 || isLoading
                 ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-blue-700'
             }`}

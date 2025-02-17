@@ -33,7 +33,7 @@ const UserProfile = () => {
   
   // console.log('userID from USERprofile',userId);
   
-  const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  const loggedInUser = useSelector((state) => state?.User?.loggedInUser);
   
   
  
@@ -187,26 +187,26 @@ const UserProfile = () => {
           {/* Stats */}
           <div className="flex gap-6 mb-4">
             <div>
-              <span className="font-semibold">{currentUser.posts?.length || 0}</span> posts
+              <span className="font-semibold">{currentUser?.posts?.length || 0}</span> posts
             </div>
             <div>
-              <span className="font-semibold">{currentUser.followers?.length || 0}</span> followers
+              <span className="font-semibold">{currentUser?.followers?.length || 0}</span> followers
             </div>
             <div>
-              <span className="font-semibold">{currentUser.following?.length || 0}</span> following
+              <span className="font-semibold">{currentUser?.following?.length || 0}</span> following
             </div>
           </div>
 
           {/* Bio */}
           <div className="text-sm">
-            <div className="font-semibold mb-1">{currentUser.fullName}</div>
-            <div className="whitespace-pre-line">{currentUser.bio || "No bio available"}</div>
-            {currentUser.website && (
+            <div className="font-semibold mb-1">{currentUser?.fullName}</div>
+            <div className="whitespace-pre-line">{currentUser?.bio || "No bio available"}</div>
+            {currentUser?.website && (
               <a
                 href={`https://${currentUser.website}`}
                 className="text-blue-900 font-semibold flex items-center gap-1 mt-1"
               >
-                <Link2 size={14} /> {currentUser.website}
+                <Link2 size={14} /> {currentUser?.website}
               </a>
             )}
           </div>
@@ -235,15 +235,15 @@ const UserProfile = () => {
 
       {/* User Posts / Saved Posts */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-1 mt-4 min-h-96">
-        {(activeTab === "posts" ? currentUser.posts : currentUser.savedPosts || [])?.length > 0 ? (
-          (activeTab === "posts" ? currentUser.posts : currentUser.savedPosts).map((post, postIndex) =>
+        {(activeTab === "posts" ? currentUser?.posts : currentUser?.savedPosts || [])?.length > 0 ? (
+          (activeTab === "posts" ? currentUser?.posts : currentUser?.savedPosts).map((post, postIndex) =>
             post?.media?.map((med, mediaIndex) => (
               <div key={`${postIndex}-${mediaIndex}`} className="relative aspect-square group">
-                {med.mediaType === "image" ? (
-                  <img src={med.url} alt="Post" className="w-full h-full object-cover" />
-                ) : med.mediaType === "video" ? (
+                {med?.mediaType === "image" ? (
+                  <img src={med?.url} alt="Post" className="w-full h-full object-cover" />
+                ) : med?.mediaType === "video" ? (
                   <video controls className="w-full h-full object-cover">
-                    <source src={med.url} type="video/mp4" />
+                    <source src={med?.url} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 ) : null}

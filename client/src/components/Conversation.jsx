@@ -32,16 +32,16 @@ const ConversationComponent = () => {
         <div className="flex items-center space-x-3">
           <div className="relative">
             <img 
-              src={conversation.participants[0].profilePic} 
-              alt={conversation.participants[0].username} 
+              src={conversation?.participants[0]?.profilePic} 
+              alt={conversation?.participants[0]?.username} 
               className="w-10 h-10 rounded-full"
             />
-            {conversation.participants[0].isOnline && (
+            {conversation?.participants[0]?.isOnline && (
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
             )}
           </div>
           <div>
-            <h3 className="font-semibold">{conversation.participants[0].username}</h3>
+            <h3 className="font-semibold">{conversation?.participants[0]?.username}</h3>
             <p className="text-xs text-gray-500">Active now</p>
           </div>
         </div>
@@ -64,18 +64,18 @@ const ConversationComponent = () => {
       {/* Messages */}
       <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
         <div className="flex flex-col space-y-4">
-          {conversation.messages.map((msg) => {
-            const isCurrentUser = msg.sender === conversation.participants[1].id;
+          {conversation?.messages?.map((msg) => {
+            const isCurrentUser = msg?.sender === conversation?.participants[1].id;
             return (
               <div 
-                key={msg.id} 
+                key={msg?.id} 
                 className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div className="flex items-end space-x-2">
                   {!isCurrentUser && (
                     <img 
-                      src={conversation.participants[0].profilePic} 
-                      alt={conversation.participants[0].username}
+                      src={conversation?.participants[0]?.profilePic} 
+                      alt={conversation?.participants[0]?.username}
                       className="w-8 h-8 rounded-full"
                     />
                   )}
@@ -89,12 +89,12 @@ const ConversationComponent = () => {
                     >
                       <p>{msg.text}</p>
                     </div>
-                    <span className="text-xs text-gray-500 ml-2">{msg.timestamp}</span>
+                    <span className="text-xs text-gray-500 ml-2">{msg?.timestamp}</span>
                   </div>
                   {isCurrentUser && (
                     <img 
-                      src={conversation.participants[1].profilePic} 
-                      alt={conversation.participants[1].username}
+                      src={conversation?.participants[1]?.profilePic} 
+                      alt={conversation?.participants[1]?.username}
                       className="w-8 h-8 rounded-full"
                     />
                   )}
@@ -118,7 +118,7 @@ const ConversationComponent = () => {
           <button 
             type="submit"
             className="p-2 rounded-full bg-blue-500 text-white"
-            disabled={!message.trim()}
+            disabled={!message?.trim()}
           >
             <Send size={18} />
           </button>
