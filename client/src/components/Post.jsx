@@ -21,7 +21,7 @@ const fetchPosts = async (pageParam) => {
   );
   // console.log(" response Inside fetchProducts ln 18",response.data);
 
-  return response.data;
+  return response?.data;
 };
 
 // InstagramPost component that renders individual posts
@@ -31,16 +31,16 @@ const InstagramPost = ({ post }) => {
 
   // console.log(`postIDDDDDDD` , post._id);
 
-  const loggedInUser = useSelector( (state) => state.User.loggedInUser );
+  const loggedInUser = useSelector( (state) => state?.User?.loggedInUser );
 
   // console.log('savedPOSTS' , loggedInUser.savedPosts);
 
   // console.log(`loggedInUser` , loggedInUser);
 
 
-  const isLoggedInUserOwner = loggedInUser._id === post?.owner?._id ;
+  const isLoggedInUserOwner = loggedInUser?._id === post?.owner?._id ;
 
-  const isPostBookMarked = !isLoggedInUserOwner && loggedInUser?.savedPosts?.some((savedPost => savedPost._id === post._id));
+  const isPostBookMarked = !isLoggedInUserOwner && loggedInUser?.savedPosts?.some((savedPost => savedPost?._id === post?._id));
   
   // console.log("isPostBookMarked" , isPostBookMarked);
   const isPostLikedCheck = post?.likedBy?.includes(loggedInUser?._id);
@@ -87,9 +87,9 @@ const InstagramPost = ({ post }) => {
 
   try {
 
-    console.log("inside Mutate funct like" , post._id);
+    console.log("inside Mutate funct like" , post?._id);
 
-    const handleLikeUrl = isPostLiked ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unLikePost/${post._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/likePost/${post._id}`
+    const handleLikeUrl = isPostLiked ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unLikePost/${post?._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/likePost/${post?._id}`
 
     const res = await axios.post( handleLikeUrl   , {} , {
       withCredentials: true,
@@ -113,9 +113,9 @@ const InstagramPost = ({ post }) => {
 
     try {
 
-      console.log("inside Mutate funct like" , post._id);
+      console.log("inside Mutate funct like" , post?._id);
   
-      const handleBookMarkUrl = isPostSaved ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unBookMarkPost/${post._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/bookMarkPost/${post._id}`
+      const handleBookMarkUrl = isPostSaved ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unBookMarkPost/${post?._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/bookMarkPost/${post?._id}`
   
       const res = await axios.post( handleBookMarkUrl  , {} , {
         withCredentials: true,
@@ -266,12 +266,12 @@ const InstagramPost = ({ post }) => {
         {/* Caption */}
         <div className="mb-2">
           <span className="font-semibold text-sm mr-2">{post?.owner?.userName}</span>
-          <span className="text-sm">{post.caption}</span>
+          <span className="text-sm">{post?.caption}</span>
         </div>
 
         {/* Comments */}
         <div className={`text-gray-500 text-sm mb-2 ${post?.comments?.length > 0 ? 'block' : 'hidden'}`}>
-          View all {post.comments.length} comments
+          View all {post?.comments?.length} comments
         </div>
 
         {/* Timestamp */}
@@ -301,7 +301,7 @@ const InstagramFeed = () => {
     getNextPageParam: (lastPage , allPages) => {
       // console.log("lastPage", lastPage);
       // console.log("allPages", allPages);
-      return lastPage.nextPage ? lastPage.nextPage : null;
+      return lastPage?.nextPage ? lastPage?.nextPage : null;
     }, // Auto-fetch next page
   });
  
@@ -360,7 +360,7 @@ const InstagramFeed = () => {
   return (
     <div className="max-w-xl mx-auto p-4">
       {data?.pages?.map((page, pageIndex) =>
-        page.posts.map((post) => (
+        page?.posts?.map((post) => (
           <div key={post._id}>
             <InstagramPost post={post} />
           </div>

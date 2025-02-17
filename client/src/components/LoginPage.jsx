@@ -50,7 +50,7 @@ export default function Login() {
 
       console.log(error)
 
-      toast.error(error.response.data.message)
+      toast.error(error?.response?.data?.message)
 
       console.log(`error in axios ${error}`);
       
@@ -156,7 +156,7 @@ export default function Login() {
               {...register('identifier')}
               className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
-            {errors.identifier && <p className="text-sm text-red-500 mt-1">{errors.identifier.message}</p>}
+            {errors?.identifier && <p className="text-sm text-red-500 mt-1">{errors?.identifier?.message}</p>}
           </div>
           <div className="relative">
             <input
@@ -175,7 +175,7 @@ export default function Login() {
                 <EyeOff className="text-gray-400 dark:text-gray-300" />
               )}
             </div>
-            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+            {errors?.password && <p className="text-sm text-red-500 mt-1">{errors?.password?.message}</p>}
           </div>
           <button
             type="submit"

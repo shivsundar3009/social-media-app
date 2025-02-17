@@ -165,19 +165,19 @@ export default function SignupPage() {
       // console.log(`step 1 working`);
 
       setFormData({
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        fullName: data.fullName,
-        age: data.age,
-        gender: data.gender,
-        password: data.password,
+        email: data?.email,
+        phoneNumber: data?.phoneNumber,
+        fullName: data?.fullName,
+        age: data?.age,
+        gender: data?.gender,
+        password: data?.password,
   
       })
       // console.log(data);
   
       const checkData = {
-        email: data.email,
-        phoneNumber: data.phoneNumber,
+        email: data?.email,
+        phoneNumber: data?.phoneNumber,
       };
   
            checkUser(checkData, {
@@ -245,8 +245,8 @@ export default function SignupPage() {
   
       registerUser({
        ...formData,
-        profilePicture: data.profilePicture,
-        userName: data.userName,
+        profilePicture: data?.profilePicture,
+        userName: data?.userName,
       }, {
          
         onSuccess : (data) => {
@@ -269,7 +269,7 @@ export default function SignupPage() {
   
         },
         onError : (error) => {
-          alert(`alert in mutation : ${error.message}`);
+          alert(`alert in mutation : ${error?.message}`);
         }
       })
     } catch (error) {
@@ -390,8 +390,8 @@ export default function SignupPage() {
                 placeholder="Email address"
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              {errors?.email && (
+                <p className="text-red-500 text-sm">{errors?.email?.message}</p>
               )}
               {/* {console.log(errors)} */}
             </div>
@@ -406,9 +406,9 @@ export default function SignupPage() {
                 placeholder="Phone Number"
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.phoneNumber && (
+              {errors?.phoneNumber && (
                 <p className="text-red-500 text-sm">
-                  {errors.phoneNumber.message}
+                  {errors?.phoneNumber?.message}
                 </p>
               )}
             </div>
@@ -422,9 +422,9 @@ export default function SignupPage() {
                 placeholder="Full Name"
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.fullName && (
+              {errors?.fullName && (
                 <p className="text-red-500 text-sm">
-                  {errors.fullName.message}
+                  {errors?.fullName?.message}
                 </p>
               )}
             </div>
@@ -437,8 +437,8 @@ export default function SignupPage() {
                 {...register("age")}
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.age && (
-                <p className="text-red-500 text-sm">{errors.age.message}</p>
+              {errors?.age && (
+                <p className="text-red-500 text-sm">{errors?.age?.message}</p>
               )}
             </div>
 
@@ -479,8 +479,8 @@ export default function SignupPage() {
                 </label>
 
               </div>
-                {errors.gender && (
-                <p className="text-red-500 text-sm">{errors.gender.message}</p>
+                {errors?.gender && (
+                <p className="text-red-500 text-sm">{errors?.gender?.message}</p>
               )}
               {/* <p>Selected Gender: {selectedGender}</p> */}
             </div>
@@ -495,9 +495,9 @@ export default function SignupPage() {
                 placeholder="Password"
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.password && (
+              {errors?.password && (
                 <p className="text-red-500 text-sm">
-                  {errors.password.message}
+                  {errors?.password?.message}
                 </p>
               )}
             </div>
@@ -535,9 +535,9 @@ export default function SignupPage() {
                 placeholder="Userame"
                 className="w-full p-3 border dark:text-gray-300 border-gray-300 dark:bg-[#121212] rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 dark:focus:ring-transparent"
               />
-              {errors.userName && (
+              {errors?.userName && (
                 <p className="text-red-500 text-sm">
-                  {errors.userName.message}
+                  {errors?.userName?.message}
                 </p>
               )}
             </div>

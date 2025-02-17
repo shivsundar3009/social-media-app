@@ -51,23 +51,23 @@ const Settings = () => {
         <h1 className="text-2xl font-semibold">Settings</h1>
       </div>
 
-      {settingsGroups.map((group, groupIndex) => (
+      {settingsGroups?.map((group, groupIndex) => (
         <div key={groupIndex} className="mb-6">
           <h2 className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase">
-            {group.title}
+            {group?.title}
           </h2>
           <div className="border-t border-b">
-            {group.items.map((item, itemIndex) => (
+            {group?.items?.map((item, itemIndex) => (
               <button
                 key={itemIndex}
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 border-b last:border-b-0"
-                onClick={() => console.log(`Clicked ${item.label}`)}
+                onClick={() => console.log(`Clicked ${item?.label}`)}
               >
                 <div className="flex items-center space-x-3">
-                  <span className="text-gray-600">{item.icon}</span>
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-gray-600">{item?.icon}</span>
+                  <span className="text-sm font-medium">{item?.label}</span>
                 </div>
-                {item.hasChevron && (
+                {item?.hasChevron && (
                   <ChevronRight size={20} className="text-gray-400" />
                 )}
               </button>
