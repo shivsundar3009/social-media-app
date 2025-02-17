@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Grid, Bookmark, Settings, Link2 , Instagram } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useEffect } from "react";
 
 const fetchUserData = async (userId) => {
   try {
@@ -11,7 +12,7 @@ const fetchUserData = async (userId) => {
     
     // return response.json();
 
-    console.log("data inside fetch data",res?.data?.user);
+    // console.log("data inside fetch data",res?.data?.user);
 
     return res?.data?.user
 
@@ -24,20 +25,103 @@ const fetchUserData = async (userId) => {
 };
 
 const UserProfile = () => {
+
+  
   const { userId } = useParams();
 
-  console.log('userID from USERprofile',userId);
-
+  const [isCurrentUserFollowedByLoggedInUser , setIsCurrentUserFollowedByLoggedInUser] = useState(false);
+  
+  // console.log('userID from USERprofile',userId);
+  
   const loggedInUser = useSelector((state) => state.User.loggedInUser);
+  
+  
+ 
+  
+  
+  
+  
   const [activeTab, setActiveTab] = useState("posts");
-
+  
   const { data: userData, error, isLoading } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => fetchUserData(userId),
     enabled: userId !== loggedInUser?._id, // Skip fetching if it's the logged-in user
   });
-
+  
   const currentUser = userId === loggedInUser?._id ? loggedInUser : userData;
+
+  const handleFollowFunc = async () => {
+
+    // console.log("inside handleFollowFunc")
+    try {
+
+      // console.log("inside Mutate funct follow" );
+  
+      const handleFollowUrl = isCurrentUserFollowedByLoggedInUser ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/unFollowUser/${currentUser?._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/followUser/${currentUser?._id}`
+  
+      const res = await axios.post( handleFollowUrl  , {} , {
+        withCredentials: true,
+      });
+  
+      return res ;
+
+
+      
+    } catch (error) {
+
+      console.log(`error in handleFollowFunc` , error);
+      
+    }
+
+  };
+
+  const { mutate: handleFollowMutation , isLoading : isFollowMutationLoading } = useMutation({
+    mutationFn: handleFollowFunc,
+    onSuccess: (data) => {
+      // console.log("data in handleFollow after MUTATION success",data);
+
+      setIsCurrentUserFollowedByLoggedInUser(prev =>!prev);
+      // toast.success(data?.data?.message)
+    },
+    onError: (error) => {
+      console.log('error in handleFollowMutation', error);
+    }
+  });
+
+  useEffect(()=>{
+
+     if(userData) {
+
+      if(loggedInUser &&  currentUser?._id !== loggedInUser?._id){
+
+        // console.log('USERDATA , CURRENT USER' ,currentUser);
+
+        // console.log("logged in user" ,loggedInUser);
+        // console.log("current UserID" , userId);
+        
+        const isFollowing = loggedInUser?.following?.includes(currentUser?._id);
+  
+        // console.log("isFOLLOWINF" , isFollowing);
+        
+        setIsCurrentUserFollowedByLoggedInUser(isFollowing);
+      };
+
+     }
+    
+    if(loggedInUser &&  userId !== loggedInUser?._id){
+
+      // console.log("logged in user" ,loggedInUser);
+      // console.log("current UserID" , userId);
+      
+      const isFollowing = loggedInUser?.following?.includes(currentUser?._id);
+
+      // console.log("isFOLLOWINF" , isFollowing);
+      
+      setIsCurrentUserFollowedByLoggedInUser(isFollowing);
+    };
+    
+  },[userData]);
 
   if (isLoading) {
     return (
@@ -72,8 +156,8 @@ const UserProfile = () => {
       <div className="flex items-center gap-6 mb-6">
         <div className="w-24 h-24 md:w-40 md:h-40">
           <img
-            src={currentUser.profilePicture || "/default-profile.png"}
-            alt={currentUser.userName}
+            src={currentUser?.profilePicture || "/default-profile.png"}
+            alt={currentUser?.userName}
             className="w-full h-full rounded-full object-cover border border-gray-200"
           />
         </div>
@@ -81,18 +165,19 @@ const UserProfile = () => {
         {/* Profile Info */}
         <div className="flex flex-col">
           <div className="flex items-center gap-4 mb-4">
-            <h1 className="text-lg font-semibold">{currentUser.userName}</h1>
-            {loggedInUser && loggedInUser._id !== currentUser._id && (
+            <h1 className="text-lg font-semibold">{currentUser?.userName}</h1>
+            {loggedInUser && loggedInUser?._id !== currentUser?._id && (
               <div className="flex gap-2">
-                <button className="bg-blue-500 text-white px-4 md:px-6 py-1.5 rounded-lg font-semibold text-sm">
-                  Follow
+                <button className={`${isCurrentUserFollowedByLoggedInUser ? 'bg-slate-500' : "bg-blue-500" } text-white px-4 md:px-6 py-1.5 rounded-lg font-semibold text-sm`}
+                onClick={handleFollowMutation}>
+                  {isCurrentUserFollowedByLoggedInUser ? "unFollow" : "Follow"}
                 </button>
                 <button className="bg-gray-100 px-4 md:px-6 py-1.5 rounded-lg font-semibold text-sm">
                   Message
                 </button>
               </div>
             )}
-            {loggedInUser && loggedInUser._id === currentUser._id && (
+            {loggedInUser && loggedInUser?._id === currentUser?._id && (
               <Link to="/settings" className="bg-gray-100 p-2 rounded-lg">
                 <Settings size={16} />
               </Link>
@@ -152,7 +237,7 @@ const UserProfile = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-1 mt-4 min-h-96">
         {(activeTab === "posts" ? currentUser.posts : currentUser.savedPosts || [])?.length > 0 ? (
           (activeTab === "posts" ? currentUser.posts : currentUser.savedPosts).map((post, postIndex) =>
-            post.media.map((med, mediaIndex) => (
+            post?.media?.map((med, mediaIndex) => (
               <div key={`${postIndex}-${mediaIndex}`} className="relative aspect-square group">
                 {med.mediaType === "image" ? (
                   <img src={med.url} alt="Post" className="w-full h-full object-cover" />

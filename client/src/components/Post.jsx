@@ -33,16 +33,21 @@ const InstagramPost = ({ post }) => {
 
   const loggedInUser = useSelector( (state) => state.User.loggedInUser );
 
+  // console.log('savedPOSTS' , loggedInUser.savedPosts);
+
+  // console.log(`loggedInUser` , loggedInUser);
+
 
   const isLoggedInUserOwner = loggedInUser._id === post?.owner?._id ;
 
-  const isPostBookMarked = !isLoggedInUserOwner && loggedInUser?.savedPosts?.includes(post._id);
-
+  const isPostBookMarked = !isLoggedInUserOwner && loggedInUser?.savedPosts?.some((savedPost => savedPost._id === post._id));
+  
+  // console.log("isPostBookMarked" , isPostBookMarked);
   const isPostLikedCheck = post?.likedBy?.includes(loggedInUser?._id);
 
   // console.log("posttTTT" ,post)
 
-  console.log(`isPostLiked ${post._id}`,isPostLiked);
+  // console.log(`isPostLiked ${post._id}`,isPostLiked);
 
   // console.log('isPostBookMarked', isPostBookMarked);
 
@@ -61,28 +66,32 @@ const InstagramPost = ({ post }) => {
 
   const handleClickBookMark = () => {
 
-    console.log(`inside handle CLICK`);
+    // console.log(`inside handle CLICK`);
 
     
-    setIsPostSaved( prev => !prev);
+    // setIsPostSaved( prev => !prev);
+
+    handleBookMarkMutation();
     
   };
 
   const handleClickLike = () => {
     console.log(`inside handle CLICK LIKE`);
 
-    likePostMutation();
+    handleLikeMutation();
 
-    setIsPostLiked(prev =>!prev);
+    // setIsPostLiked(prev =>!prev);
   };
 
- const likePostFunc = async ( ) => {
+ const handleLikeFunc = async ( ) => {
 
   try {
 
     console.log("inside Mutate funct like" , post._id);
 
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/post/likePost/${post._id}` , {} , {
+    const handleLikeUrl = isPostLiked ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unLikePost/${post._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/likePost/${post._id}`
+
+    const res = await axios.post( handleLikeUrl   , {} , {
       withCredentials: true,
     });
 
@@ -100,21 +109,40 @@ const InstagramPost = ({ post }) => {
 
  };
 
-  const unLikePostFunc = async ( ) => {
+  const handleBookMarkFunc = async ( ) => {
+
+    try {
+
+      console.log("inside Mutate funct like" , post._id);
+  
+      const handleBookMarkUrl = isPostSaved ? `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/unBookMarkPost/${post._id}` : `${import.meta.env.VITE_BACKEND_URL}/api/v1/post/bookMarkPost/${post._id}`
+  
+      const res = await axios.post( handleBookMarkUrl  , {} , {
+        withCredentials: true,
+      });
+  
+      return res ;
+      
+    } catch (error) {
+  
+      console.log('error in bookmarkFunc', error);
+  
+      toast.error("error in bookmarkFunc", error);
+      
+    }
 
  };
-  const savePostFunc = async ( ) => {
-
- };
-  const unSavePostFunc = async ( ) => {
-
- };
-
- const { mutate: likePostMutation} = useMutation({
-  mutationFn: likePostFunc,
+ 
+ const { mutate: handleLikeMutation} = useMutation({
+  mutationFn: handleLikeFunc,
   onSuccess: (data) => {
 
-    console.log("data in like POST after MUTATION success",data)
+    console.log("data in handleLikePost after MUTATION success",data)
+
+    toast.success(data?.data?.message)
+
+    setIsPostLiked(prev =>!prev);
+
 
   },
   onError: (error) => {
@@ -123,27 +151,27 @@ const InstagramPost = ({ post }) => {
 
   }
 });
- const { mutate: unLikePostMutation} = useMutation({
-  mutationFn: unLikePostFunc
+
+ const { mutate: handleBookMarkMutation } = useMutation({
+  mutationFn: handleBookMarkFunc,
+  onSuccess: (data) => {
+
+    console.log("data in handleBookMark after MUTATION success",data)
+
+    toast.success(data?.data?.message)
+
+    setIsPostSaved(prev =>!prev);
+
+
+  },
+  onError: (error) => {
+
+    console.log('error in after bookMarkMutation', error);
+
+  }
 });
- const { mutate: savePostMutation } = useMutation({
-  mutationFn: savePostFunc
-});
- const { mutate: unSavePostMutation} = useMutation({
-  mutationFn: unSavePostFunc
-});
+
   
-  // console.log('isPostSaved', isPostSaved);
-
-
-//   console.log("isPostBookMarked" , isPostBookMarked);
-//  console.log('isloggged IN USER OWNER' , isLoggedInUserOwner);
-//   console.log("savedPosts",loggedInUser?.savedPosts);
-
-  // console.log("post inside INSTAGRAM OIST",post)
-  // console.log('instapraPOST INSIDE 25',post);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const timeAgo = formatDistanceToNow(new Date(post?.createdAt))
   .replace(/^about /, "") .replace(" seconds", "s")
   .replace(" second", "s")
@@ -184,7 +212,7 @@ const InstagramPost = ({ post }) => {
 
       {/* Post Images / Carousel */}
       <div className="relative">
-        <Swiper navigation modules={[Navigation]} className="w-80 sm:w-full sm: overflow-hidden">
+        <Swiper navigation modules={[Navigation]} className="w-72 sm:w-full overflow-hidden">
           {post?.media?.map((mediaItem, index) => (
             <SwiperSlide key={index}>
               {mediaItem?.mediaType === 'image' ? (
