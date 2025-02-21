@@ -59,12 +59,20 @@ export const getMutualFollowers = async (req , res , next) => {
 
         console.log("mutualFollowers" , mutualFollowers);
 
+        const conversations = await Conversation.find({
+            participants: { 
+                $all: [loggedInUserId], 
+                $in: mutualFollowers
+            }
+        })
 
+
+        console.log("conversations" , conversations);
 
 
   
          
-        res.status(200).json({message: "getConversationsWithMutualFollwers working properly" , success : true});
+        res.status(200).json({message: "getConversationsWithMutualFollwers working properly" , success : true , mutualFollowers , co});
 
         
     } catch (error) {
