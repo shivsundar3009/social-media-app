@@ -32,38 +32,38 @@ const ProtectedRoute = ({ children, loggedInUser }) => {
   }
 
   // If token is missing, force logout
-  if (!token) {
+  // if (!token) {
 
-    console.log("no token Inside protected route 3");
-    toast.error("No Token! Please log in again.");
-    dispatch(logout()); // Reset Redux state
-    return <Navigate to="/" replace />;
-  }
+  //   console.log("no token Inside protected route 3");
+  //   toast.error("No Token! Please log in again.");
+  //   dispatch(logout()); // Reset Redux state
+  //   return <Navigate to="/" replace />;
+  // }
 
   // Check if token is expired
-  try {
-    const decodedToken = jwtDecode(token);
-    const currentTime = Date.now() / 1000; // Convert to seconds
+  // try {
+  //   const decodedToken = jwtDecode(token);
+  //   const currentTime = Date.now() / 1000; // Convert to seconds
 
-    console.log('decoded token 4: ', decodedToken);
-    // console.log("current time2: ", currentTime);
+  //   console.log('decoded token 4: ', decodedToken);
+  //   // console.log("current time2: ", currentTime);
 
-    // console.log("token expired or NOT" , decodedToken.exp < currentTime);
+  //   // console.log("token expired or NOT" , decodedToken.exp < currentTime);
 
-    if (decodedToken.exp < currentTime) {
-      console.log('tokenExpired INSIDE protected routen 5');
-      toast.error("Session expired! Please log in again.");
-      Cookies.remove("token"); // Remove expired token
-      dispatch(logout()); // Reset Redux state
-      return <Navigate to="/" replace />;
-    }
-  } catch (error) {
-    console.log("error in jwtDecode inside protected route 6", error);
-    toast.error("Invalid session! Please log in again.");
-    Cookies.remove("token");
-    dispatch(logout());
-    return <Navigate to="/" replace />;
-  }
+  //   if (decodedToken.exp < currentTime) {
+  //     console.log('tokenExpired INSIDE protected routen 5');
+  //     toast.error("Session expired! Please log in again.");
+  //     Cookies.remove("token"); // Remove expired token
+  //     dispatch(logout()); // Reset Redux state
+  //     return <Navigate to="/" replace />;
+  //   }
+  // } catch (error) {
+  //   console.log("error in jwtDecode inside protected route 6", error);
+  //   toast.error("Invalid session! Please log in again.");
+  //   Cookies.remove("token");
+  //   dispatch(logout());
+  //   return <Navigate to="/" replace />;
+  // }
 
   return children;
 };
@@ -103,8 +103,10 @@ function App() {
 
 
   useEffect(() => {
-    dispatch(fetchUser()); // Fetch user on refresh
-  }, [dispatch]);
+    if (location.pathname !== "/" && location.pathname !== "/signup") {
+      dispatch(fetchUser());
+    }
+  }, [dispatch, location.pathname]);
 
   useEffect(() => {
     const checkHeartbeat = async () => {

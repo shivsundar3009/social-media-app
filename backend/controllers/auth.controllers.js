@@ -76,7 +76,7 @@ export const updateOnRefresh = async (req,res) => {
         console.log("loggedInUserId in asyncTHUNK", loggedInUserId);
 
         if(!loggedInUserId){
-            return res.status(401).json({ message: "Unauthorized Please Log In Again", success : false });  // Return unauthorized if no token is present in the request header
+            return res.status(401).json({ message: "Unauthorized Access Please Log In Again", success : false });  // Return unauthorized if no token is present in the request header
         }
 
        const user = await User.findById(loggedInUserId).select('-password').populate("posts savedPosts");

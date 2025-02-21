@@ -11,6 +11,7 @@ import {Link} from "react-router-dom"
 import { useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
+import { useRef } from 'react';
 
 // Function to fetch posts from the backend
 const fetchPosts = async (pageParam) => {
@@ -28,6 +29,8 @@ const fetchPosts = async (pageParam) => {
 const InstagramPost = ({ post }) => {
   const [isPostSaved , setIsPostSaved] = useState(false);
   const [isPostLiked , setIsPostLiked] = useState(false);
+
+  const testRef = useRef();
 
   // console.log(`postIDDDDDDD` , post._id);
 
@@ -76,6 +79,8 @@ const InstagramPost = ({ post }) => {
   };
 
   const handleClickLike = () => {
+
+    
     console.log(`inside handle CLICK LIKE`);
 
     handleLikeMutation();

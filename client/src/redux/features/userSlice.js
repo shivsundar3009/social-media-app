@@ -7,11 +7,11 @@ import { toast } from "react-toastify";
 // Async thunk to fetch user data
 export const fetchUser = createAsyncThunk("user/fetchUser", async (_, { rejectWithValue }) => {
   try {
-    const token = Cookies.get("token");
+    // const token = Cookies.get("token");
 
-    console.log('token INSIDE asyncTHunk', token);
+    // console.log('token INSIDE asyncTHunk', token);
     
-    if (!token) return rejectWithValue("No token found");
+    // if (!token) return rejectWithValue("No token found");
 
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/updateOnRefresh`, {
       withCredentials: true, //
