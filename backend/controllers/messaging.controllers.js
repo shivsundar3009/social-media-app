@@ -62,30 +62,45 @@ next();
             return res.status(401).json({ message: "Unauthorized", success : false });
         }
 
-        const mutualFollowers = req.mutualFollowers ;
+        const mutualFollowers = req.mutualFollowers;
+
+        console.log('mutual!!!!!! followers that are in req' , mutualFollowers);
+
+        const mutualFollowersIds = mutualFollowers.map(mF => mF._id);
+
+        console.log("mutualFollowersId",mutualFollowersIds);
+
+
 
         if(mutualFollowers.length == 0){
             return res.status(400).json({ message: "No mutual followers found", success : false });
         };
 
-        console.log("mutualFollowers" , mutualFollowers);
+        // console.log("mutualFollowers" , mutualFollowers);
 
         const conversations = await Conversation.find({
             participants: { 
                 $all: [loggedInUserId], 
-                $in: mutualFollowers
-            }
-        }).populate({
+                $in: mutualFollowersIds}})
+        .select("-messages")        
+        .populate({
             path: "participants",
             match: { _id: { $ne: loggedInUserId } }, // this will only return otherUser
-            select: "username fullName profilePicture",
-          }).populate({
+            select: "username fullName profilePicture",})
+        .populate({
             path: "lastMessage",
-            select: "content createdAt",
-          });
+            select: "content createdAt",});
 
 
         console.log("conversations" , conversations);
+
+        const otherMutualFollowersInConversationsIds = new Set(conversations.map(convo => convo.participants[0]._id.toString()));
+
+        console.log("otherMUTUALfoloowerINCOnvo" , otherMutualFollowersInConversationsIds);
+
+        const mutualFollowersWithoutConversation = mutualFollowers.filter(user => !otherMutualFollowersInConversationsIds.has(user._id.toString())) ;
+
+        console.log("mutualFollowersWithoutConversation" , mutualFollowersWithoutConversation);
 
         const formattedConversations = conversations.map((conversation) => {
             const { participants, ...rest } = conversation.toObject(); 
@@ -94,11 +109,24 @@ next();
                 ...rest
             };
         });
+        
+        // const mutualFollowersWithNoConversation = formattedConversations.filter(otherUser => otherUser._id !includes(mutualFollowers));
 
+        // Extract user IDs from formattedConversations
+// const usersInConversations = new Set(formattedConversations.map(convo => convo.otherUser?._id.toString()));
+
+// // Filter mutual followers who are not in any conversation
+// const mutualFollowersWithNoConversation = mutualFollowers.filter(userId => !usersInConversations.has(userId.toString()));
+
+// console.log('mutualFollowersWithNoConversation', mutualFollowersWithNoConversation);
+
+        // console.log('mutualFollowersWithNoConversation' , mutualFollowersWithNoConversation);
+
+        // console.log('formattedzConversation',formattedConversations);
 
   
          
-        res.status(200).json({message: "getConversationsWithMutualFollwers working properly" , success : true , mutualFollowers , formattedConversations});
+        res.status(200).json({message: "getConversationsWithMutualFollwers working properly" , success : true , mutualFollowersWithoutConversation , formattedConversations});
 
         
     } catch (error) {
@@ -292,6 +320,14 @@ res.status(200).json({
             receiversId,
             messageText
         });
+
+        await newMessage.save();
+
+        conversation.messages.push(newMessage._id);
+
+        conversation.lastMessage = newMessage._id;
+
+       await conversation.save();
         
        res.status(200).json({data : {
         newMessage,
